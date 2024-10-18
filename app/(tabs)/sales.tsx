@@ -1,86 +1,29 @@
-import SaleRecordCard from 'components/SalesCard'
-import { ScrollView } from 'tamagui'
+import SalesCard, { salesData } from "components/cards/SalesCard";
+import SearchBar from "components/cards/searchBar";
+import { FlatList } from "react-native";
+import { Text, View } from "tamagui";
 
-export default function Sales() {
-  return (
-    <ScrollView p='$4' gap='$4'>
-      {BOOKS.map((book, index) => (
-        <SaleRecordCard key={index} productName={book.title} quantity={book.quantity} price={book.price} paymentMethod={book.paymentMethod} discount={book.discount} />
-      ))}
-    </ScrollView>
-  )
+
+export default function SalesPage() {
+    return <>
+        <View>
+            <SearchBar />
+            <FlatList
+                style={{
+                    padding: 15
+                }}
+                data={salesData}
+                renderItem={({ item }) => <SalesCard
+                    name={item.name}
+                    badge={item.badge}
+                    paymentMethod={item.paymentMethod}
+                    quantity={item.quantity}
+                    salePrice={item.salePrice}
+                    timestamp={item.timestamp}
+                    showBadge={false} />
+                }
+                keyExtractor={item => `${Math.random() * 1000}`}
+            />
+        </View>
+    </>
 }
-
-
-const BOOKS = [
-  {
-    title: 'The Lean Startup',
-    quantity: 10,
-    price: 20,
-    paymentMethod: 'MOMO',
-    discount: 10,
-  },
-  {
-    title: 'Zero to One',
-    quantity: 5,
-    price: 15,
-    paymentMethod: 'Cash',
-    discount: 5,
-  },
-  {
-    title: 'The Lean Startup',
-    quantity: 10,
-    price: 20,
-    paymentMethod: 'MOMO',
-    discount: 10,
-  },
-  {
-    title: 'Zero to One',
-    quantity: 5,
-    price: 15,
-    paymentMethod: 'Cash',
-    discount: 5,
-  },
-  {
-    title: 'The Lean Startup',
-    quantity: 10,
-    price: 20,
-    paymentMethod: 'MOMO',
-    discount: 10,
-  },
-  {
-    title: 'Zero to One',
-    quantity: 5,
-    price: 15,
-    paymentMethod: 'Cash',
-    discount: 5,
-  },
-  {
-    title: 'The Lean Startup',
-    quantity: 10,
-    price: 20,
-    paymentMethod: 'MOMO',
-    discount: 10,
-  },
-  {
-    title: 'Zero to One',
-    quantity: 5,
-    price: 15,
-    paymentMethod: 'Cash',
-    discount: 5,
-  },
-  {
-    title: 'The Lean Startup',
-    quantity: 10,
-    price: 20,
-    paymentMethod: 'MOMO',
-    discount: 10,
-  },
-  {
-    title: 'Zero to One',
-    quantity: 5,
-    price: 15,
-    paymentMethod: 'Cash',
-    discount: 5,
-  },
-]

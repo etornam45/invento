@@ -14,8 +14,8 @@ export {
 } from 'expo-router'
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  // Ensure that reloading on /modal keeps a back button present.
+  initialRouteName: '/(tabs)',
 }
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -52,17 +52,35 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 function RootLayoutNav() {
   const colorScheme = useColorScheme()
   const theme = useTheme()
+
+
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       <Stack>
+
+        <Stack.Screen
+          name='OnboardingScreen'
+          
+          options={{
+            headerShown: false,
+          }}
+        />
+
         <Stack.Screen
           name="(tabs)"
           options={{
             headerShown: false,
-            title: 'Invento',
           }}
         />
+
+        <Stack.Screen 
+          name='SalesScanner'
+          options={{
+            title: 'BarCode Scanner'
+          }}
+          />
 
         <Stack.Screen
           name="modal"
@@ -77,34 +95,7 @@ function RootLayoutNav() {
             },
           }}
         />
-        <Stack.Screen
-          name="new_sale"
-          options={{
-            title: 'New Sale',
-            presentation: 'modal',
-            animation: 'slide_from_bottom',
-            gestureEnabled: true,
-            gestureDirection: 'vertical',
-            contentStyle: {
-              backgroundColor: theme.background.val,
-            },
-          }}
-        />
-        <Stack.Screen
-          name='shop_new'
-          options={{
-            title: 'New Item',
-            presentation: 'card',
-            animation: 'slide_from_bottom',
-            gestureEnabled: true,
-            gestureDirection: 'vertical',
-            contentStyle: {
-              backgroundColor: theme.background.val,
-            },
-          }}
-        />
       </Stack>
-
     </ThemeProvider>
   )
 }

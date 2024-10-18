@@ -1,10 +1,25 @@
-import { Link, Tabs } from 'expo-router'
+import { Link, Tabs, useRouter } from 'expo-router'
 import { Button, useTheme } from 'tamagui'
-import { Atom, AudioWaveform, Home, ShoppingBag, Settings, PlusCircle, PackagePlus } from '@tamagui/lucide-icons'
+import { Atom, AudioWaveform, BadgeCent, BadgePercent, Box, Camera, DollarSign, Home, ShoppingCart } from '@tamagui/lucide-icons'
+import { Pressable } from 'react-native'
+import { useEffect } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function TabLayout() {
   const theme = useTheme()
+  const router = useRouter();
 
+  useEffect(() => {
+    async function checkOnboarding() {
+      const onboardingComplete = await AsyncStorage.getItem('onboardingComplete');
+      if (onboardingComplete !== 'true') {
+        router.replace('/OnboardingScreen');
+      }
+    }
+
+    checkOnboarding();
+  }, [router]);
   return (
     <Tabs
       screenOptions={{
@@ -25,52 +40,39 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <Home color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name='sales'
+        options={{
+          title: 'Sales',
+          tabBarIcon: ({ color }) => <BadgePercent color={color} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
-              <PlusCircle
-              mr={16}
-              color={
-                theme.color.val === theme.dark?.val ? theme.blue10.val : theme.red10.val
-              } size={24} />
+            <Link href="/SalesScanner" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <Camera mr='$3.5'/>
+                )}
+              </Pressable>
             </Link>
           ),
         }}
       />
       <Tabs.Screen
-        name="sales"
+        name="inventory"
         options={{
-          title: 'Sales',
-          tabBarIcon: ({ color }) => <AudioWaveform color={color} />,
-          headerRight: () => (
-            <Link href="/new_sale" asChild>
-              <PlusCircle  size={24} color={theme.red10.val} mr={16} />
-            </Link>
-          ),
+          title: 'Inventory',
+          tabBarIcon: ({ color }) => <Box color={color} />,
         }}
       />
-      <Tabs.Screen 
-        name="shop"
+      <Tabs.Screen
+        name="finance"
         options={{
-          title: 'Shop',
-          tabBarIcon: ({ color }) => <ShoppingBag color={color} />,
-          headerRight: () => (
-            <Link href={{ pathname: "/shop_new" }} asChild>
-              <PackagePlus
-              mr={16}
-              color={
-                theme.color.val === theme?.dark?.val ? theme.blue10.val : theme.red10.val
-              } size={24} />
-            </Link>
-          ),
+          title: 'Finance',
+          tabBarIcon: ({ color }) => <BadgeCent color={color} />,
         }}
       />
-      <Tabs.Screen 
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => <Settings color={color} />,
-        }}
-      />
+      
     </Tabs>
   )
 }

@@ -15,10 +15,10 @@ export function CurrentToast() {
       exitStyle={{ opacity: 0, scale: 1, y: -20 }}
       y={isWeb ? '$12' : 0}
       theme="purple"
-      br="$16"
+      br="$6"
       animation="quick"
     >
-      <YStack ai="center" p="$1" gap="$1">
+      <YStack ai="center" p="$2" gap="$2">
         <Toast.Title fow="bold">{currentToast.title}</Toast.Title>
         {!!currentToast.message && (
           <Toast.Description>{currentToast.message}</Toast.Description>
