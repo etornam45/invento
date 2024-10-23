@@ -34,7 +34,7 @@ export default function BarCodeScanner() {
 
   if (!hasPermission) return <PermissionsPage requestPerm={requestPermission} />;
   if (device == null) return <NoCameraDeviceError />;
-  
+
   return (
     <View overflow='hidden' m='$3.5' br={12} position='relative'>
       <Camera
@@ -70,17 +70,17 @@ export default function BarCodeScanner() {
         aspectRatio={1}
         bg={torch === 'on' ? '$blue10' : '$background'}
       >
-        {torch === 'on' ? <Flashlight /> : <FlashlightOff />}
+        {torch === 'on' ? <Flashlight size={20} /> : <FlashlightOff size={20} />}
       </Button>
     </View>
   );
 }
 
 const PermissionsPage = ({ requestPerm }) => (
-  <View aspectRatio={3/2} w='100%' jc='center' ai='center'>
+  <View p='$3'><View aspectRatio={3 / 2} space w='100%' jc='center' ai='center' borderWidth={1} borderColor='gray' br={12}>
     <Text>Camera permission required</Text>
-    <Button onPress={requestPerm}>Request permission</Button>
-  </View>
+    <Button bg='$white1' onPress={requestPerm}>Start Camera</Button>
+  </View></View>
 );
 
 const NoCameraDeviceError = () => (

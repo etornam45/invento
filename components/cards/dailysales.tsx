@@ -1,54 +1,56 @@
-import { Paragraph, Text, View, XStack, YStack } from "tamagui";
+import { TamaguiProvider, Theme, Text, View, XStack, YStack } from 'tamagui';
+import { useFonts } from 'expo-font';
 
-export default function DailySales() {
-    return <View
-        p='$3.5'
+interface DailySalesChartProps {
+    data: { name: string; value: number }[];
+    tooltip?: string;
+}
+
+const DailySalesChart = ({ data, tooltip }: DailySalesChartProps) => {
+
+    const maxValue = Math.max(...data.map((item) => item.value));
+
+    return (
+        <View p='$3.5'
         // mr='$3.5'
-        w={300}
+        w={'auto'}
+        h={'auto'}
         // h='200'
         style={{ margin: 16, marginRight: 0,  }}
         flex={1}
         borderRadius={12}
         backgroundColor='$background'
-    >
-        <XStack jc='space-between'>
-            <Paragraph fontWeight={'bold'}>
-                Most Sold Items
-            </Paragraph>
-            <Text>Last 7 days</Text>
-        </XStack>
-
-        <YStack>
-            <ProductBar name="Black soap" persecnt={80}/>
-            <ProductBar name="Pepsodent Chacoal" persecnt={76}/>
-            <ProductBar name="Soda Biscuit" persecnt={40}/>
-            <ProductBar name="Nataraj Pencil" persecnt={10}/>
-        </YStack>
-    </View>
-}
-
-
-const ProductBar = ({ name, persecnt }: {
-    name: string,
-    persecnt: number
-}) => {
-    return <YStack>
-        <XStack jc='space-between'>
-            <Paragraph fontSize={13}>
-                {name}
-            </Paragraph>
-
-            <Text>{persecnt}%</Text>
-        </XStack>
-        <XStack
-            w='100%'
-            h='$0.75'
-            backgroundColor='$blue4Light'
-            borderRadius={6}
-            overflow="hidden"
-        >
-            <XStack h='100%' w={`${persecnt}%`} backgroundColor='$blue10Light' >
+        space
+         >
+            <Text fontWeight={'bold'} fontSize={16}>
+                Daily Sales
+            </Text>
+            <XStack space="$2.5" ai='flex-end'>
+                {data.map((item) => (
+                    <YStack
+                        key={item.name}
+                        alignItems="center"
+                        space="$2"
+                        paddingVertical="$2"
+                    >
+                        <Text 
+                        fontSize={11}
+                        color="$gray11">${tooltip ? `${tooltip}: ${item.value}` : item.value}</Text>
+                        <View
+                            backgroundColor="$blue10"
+                            // width={`${(item.value / maxValue) * 100}%`}
+                            w='30'
+                            height={(item.value / maxValue) * 90}
+                            borderRadius={4}
+                        />
+                        <Text
+                            fontSize={12}
+                        color="$gray11">{item.name}</Text>
+                    </YStack>
+                ))}
             </XStack>
-        </XStack>
-    </YStack>
-}
+        </View>
+    );
+};
+
+export default DailySalesChart;

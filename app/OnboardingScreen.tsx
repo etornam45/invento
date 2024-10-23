@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Image } from 'react-native';
-import { Stack, Text, Button, XStack, YStack } from 'tamagui';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Stack, Text, Button, XStack, YStack, View, Anchor } from 'tamagui';
+import { ArrowRight } from '@tamagui/lucide-icons';
 
 // Define the structure for each slide
 interface Slide {
   title: string;
   description: string;
-  image: any; // You would replace 'any' with the actual image import type
+  image: any;
 }
 
 // Sample data for the slides
@@ -14,7 +17,7 @@ const slides: Slide[] = [
   {
     title: 'Manage your sales the easily way',
     description: 'Easily understand your sale and revenue in a visual way',
-    image: require('../assets/images/Ice cream seller-amico.png'),
+    image: require('../assets/images/Ice cream seller.gif'),
   },
   {
     title: 'Keep track of inventory',
@@ -28,63 +31,124 @@ const slides: Slide[] = [
   },
 ];
 
-export default function OnboardingScreen () {
+export default function OnboardingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
+
 
   const handleNext = () => {
+    // complete 
+    if (currentIndex === slides.length - 1) {
+      console.log('Completed');
+      router.navigate('/Register');
+      return;
+    }
+
     if (currentIndex < slides.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
 
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  }
+
   const handleSkip = () => {
     // Implement skip functionality
+    router.navigate('/Login');
     console.log('Skipped');
   };
 
   return (
-    <YStack flex={1} backgroundColor="$background" alignItems="center" justifyContent="center">
-      <XStack flex={1} alignItems="center" justifyContent="center" space>
-        {slides.map((slide, index) => (
-          <YStack
-            key={index}
-            opacity={index === currentIndex ? 1 : 0}
-            scale={index === currentIndex ? 1 : 0.9}
-            animation="lazy"
-            alignItems="center"
-            padding="$4"
+    <View style={{
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'orange',
+    }} >
+      <LinearGradient
+        colors={['#00d4ff', '#0f5d9d', '#00ff87']}
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      ></LinearGradient>
+      <YStack
+        flex={1}
+        alignItems="center"
+        justifyContent="center"
+        p='$3.5'
+        // px='$'
+      >
+        <XStack padding="$4" px='$0' jc='space-between' ai='center' w='100%'>
+          <View w='$1' h='$1' backgroundColor="" borderRadius={50} />
+          <Button  fontSize="$4" textAlign="center"
+            onPress={handleSkip}
+            variant="outlined"
+            borderColor='$colorTransparent'
           >
-            <Image source={slide.image} style={{ width: 200, height: 200 }} />
-            <Text fontSize="$6" fontWeight="bold" textAlign="center" marginTop="$4">
-              {slide.title}
-            </Text>
-            <Text fontSize="$4" textAlign="center" marginTop="$2">
-              {slide.description}
-            </Text>
-          </YStack>
-        ))}
-      </XStack>
+            skip
+          </Button>
+        </XStack>
+        <View flex={1}
+          ai='center'
+          // bg='$blue10'
+          pos='relative'
+          jc='center'
+          gap='$4'
+        >
+          {currentIndex < slides.length && (<YStack
+            key={currentIndex}
+            animation="bouncy"
+            alignItems="center"
+            justifyContent="center"
+          // padding="$4"
+          >
+            <Image source={slides[currentIndex].image} style={{ width: 316, height: 316 }} />
+            <View w='100%' p='$2.5'>
+              <Text fontSize="$9" fontWeight="bold" marginTop="$4">
+                {slides[currentIndex].title}
+              </Text>
+              <Text fontSize="$6" marginTop="$2">
+                {slides[currentIndex].description}
+              </Text>
+            </View>
+          </YStack>)}
+        </View>
 
-      <XStack space justifyContent="center" alignItems="center" padding="$4">
-        {slides.map((_, index) => (
-          <Stack
-            key={index}
-            width={10}
-            height={10}
-            borderRadius="$full"
-            backgroundColor={index === currentIndex ? '$blue10' : '$gray5'}
-          />
-        ))}
-      </XStack>
 
-      <XStack width="100%" justifyContent="space-between" padding="$4">
-        <Button onPress={handleSkip} variant="outlined">
-          Skip
-        </Button>
-        <Button onPress={handleNext} disabled={currentIndex === slides.length - 1}>
-          Next
-        </Button>
-      </XStack>
-    </YStack>
+        <XStack width="100%" justifyContent="space-between" padding="$2">
+          <Button br={25} onPress={handlePrevious}
+            opacity={currentIndex === 0 ? 0 : 1}
+            variant="outlined"
+            borderColor='$white1'
+          >
+            Previous
+          </Button>
+          <Button br={25} bg='$blue10' onPress={handleNext}>
+            {/* {currentIndex === slides.length - 1 ? 'Get Started' : 'Next'} */}
+            <ArrowRight />
+          </Button>
+        </XStack>
+        <XStack space justifyContent="center" alignItems="center" padding="$0">
+          {slides.map((_, index) => (
+            <Stack
+              key={index}
+              width={index === currentIndex ? 50 : 10}
+              height={10}
+              borderRadius="$full"
+              backgroundColor={index === currentIndex ? '$blue10' : '$white1'}
+              br={5}
+            />
+          ))}
+        </XStack>
+      </YStack>
+
+    </View>
   );
 };

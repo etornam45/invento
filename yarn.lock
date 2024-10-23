@@ -8147,6 +8147,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-linear-gradient@npm:~13.0.2":
+  version: 13.0.2
+  resolution: "expo-linear-gradient@npm:13.0.2"
+  peerDependencies:
+    expo: "*"
+  checksum: 10/2e05592bd9b3f156f0c5912a5cc152e80e930495d049382e4deec3103601ccc90b2e7cb5c208b51aa9d60386c5b762d40cc74cb2d1256a4605012e03d27be72a
+  languageName: node
+  linkType: hard
+
 "expo-linking@npm:~6.3.1":
   version: 6.3.1
   resolution: "expo-linking@npm:6.3.1"
@@ -9619,6 +9628,7 @@ __metadata:
     expo: "npm:~51.0.32"
     expo-build-properties: "npm:~0.12.5"
     expo-font: "npm:~12.0.10"
+    expo-linear-gradient: "npm:~13.0.2"
     expo-linking: "npm:~6.3.1"
     expo-router: "npm:~3.5.23"
     expo-splash-screen: "npm:~0.27.5"
@@ -9635,7 +9645,6 @@ __metadata:
     react-native-svg: "npm:^15.7.1"
     react-native-vision-camera: "npm:^4.5.3"
     react-native-web: "npm:^0.19.12"
-    react-native-worklets-core: "npm:^1.3.3"
     tamagui: "npm:^1.115.3"
     typescript: "npm:^5.5.2"
   languageName: unknown
@@ -13037,18 +13046,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-worklets-core@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "react-native-worklets-core@npm:1.3.3"
-  dependencies:
-    string-hash-64: "npm:^1.0.3"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10/5820ef5a38eaaac12ab48bb2512085e7847582ba09efbdbced2f59dc399241ee48211eb394352e64317e67aa72b05fa304e44c62633d39c12043bb327e78c45d
-  languageName: node
-  linkType: hard
-
 "react-native@npm:*, react-native@npm:0.75.2":
   version: 0.75.2
   resolution: "react-native@npm:0.75.2"
@@ -14250,13 +14247,6 @@ __metadata:
   version: 2.0.0
   resolution: "strict-uri-encode@npm:2.0.0"
   checksum: 10/eaac4cf978b6fbd480f1092cab8b233c9b949bcabfc9b598dd79a758f7243c28765ef7639c876fa72940dac687181b35486ea01ff7df3e65ce3848c64822c581
-  languageName: node
-  linkType: hard
-
-"string-hash-64@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "string-hash-64@npm:1.0.3"
-  checksum: 10/39aab30e05dfe2effe9a0807a4987cedb6c04f4dfcda3c4915add5b90d68676a6c583d2ad51683932ac3546a4f64a5e99136521b8f2eb1956d581bd2947a96a9
   languageName: node
   linkType: hard
 
