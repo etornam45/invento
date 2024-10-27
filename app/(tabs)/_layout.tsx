@@ -1,27 +1,26 @@
 import { Link, Tabs, useRouter } from 'expo-router'
-import { Button, useTheme, View } from 'tamagui'
-import { Atom, AudioWaveform, BadgeCent, BadgePercent, Box, Camera, DollarSign, Home, ShoppingCart } from '@tamagui/lucide-icons'
+import { Text, useTheme, View } from 'tamagui'
 import { Pressable } from 'react-native'
 import { useEffect, useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SolarHomeAngleBold } from 'icons/home'
 import { SolarChatRoundMoneyBold } from 'icons/sales'
 import { SolarBoxMinimalisticBold } from 'icons/box'
 import { SolarMoneyBagBold } from 'icons/wallet'
 import { SolarQrCodeBold } from 'icons/code_scanner'
+import { onboardingComplete$ } from 'utils/state/global'
+import { SolarAddCircleBold } from 'icons/plus'
 
 
 export default function TabLayout() {
   const theme = useTheme()
   const router = useRouter();
-  const [isComplete, setIsComplete] = useState<boolean>(false);
+  
   useEffect(() => {
     async function checkOnboarding() {
-      const onboardingComplete = await AsyncStorage.getItem('onboardingComplete');
-      setIsComplete(onboardingComplete === 'true')
+      onboardingComplete$.setValue(false);
       // if (onboardingComplete !== 'true') {
-      if (true) {
-        setIsComplete(true);
+      if (onboardingComplete$.getValue() === false) {
+        onboardingComplete$.setValue(true);
         router.navigate('/OnboardingScreen');
         console.log('checking onboarding');
       }
@@ -29,15 +28,11 @@ export default function TabLayout() {
     
     checkOnboarding();
     console.log('checking onboarding');
-  }, []);
+  }, [onboardingComplete$]);
 
   /**
    * If onboarding is not complete, return an empty view.
    */
-
-  // if (!isComplete) {
-  //   return (<View></View>)
-  // }
 
   return (
     <Tabs
@@ -82,6 +77,15 @@ export default function TabLayout() {
         options={{
           title: 'Inventory',
           tabBarIcon: ({ color }) => <SolarBoxMinimalisticBold fill={color} />,
+          headerRight: () => (
+            <Link href="/new_inventory" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <SolarAddCircleBold width={24} height={24}  marginRight={16} fill={theme.color.val} />
+                )}
+              </Pressable>
+            </Link>
+          ),
         }}
       />
       <Tabs.Screen

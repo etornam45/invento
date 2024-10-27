@@ -2,9 +2,15 @@ import { YStack, XStack, Text, Input, Button } from 'tamagui';
 import { useFonts } from 'expo-font';
 import { Home, MapPin } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { addBusiness, getBusiness, getBusinesses } from 'utils/db/business';
+import { users$ } from 'utils/db/users';
+import { UserState$ } from 'utils/state/user';
 
 export default function CustomizeStore() {
     const router = useRouter();
+    const [business_name, setBusinessName] = useState('');
+    const [country, setCountry] = useState('');
     const [fontsLoaded] = useFonts({
         Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     });
@@ -15,6 +21,26 @@ export default function CustomizeStore() {
 
     function handleContinue() {
         // Implement continue functionality
+        if (!business_name || !country) {
+            return;
+        }
+        console.log('Creating business');
+        let user = UserState$.getUser();
+        console.log({
+            name: business_name,
+            city: country,
+            user_id: user.id,
+            phone: user.phone ?? ''
+        })
+        addBusiness({
+            name: business_name,
+            city: country,
+            user_id: user.id,
+            phone: user.phone ?? ''
+        });
+
+        console.log('Business created');
+        console.log(getBusinesses());
         router.navigate('/Login');
     }
 
@@ -37,6 +63,8 @@ export default function CustomizeStore() {
                     backgroundColor="transparent"
                     borderWidth={0}
                     paddingLeft="$2"
+                    value={business_name}
+                    onChangeText={setBusinessName}
                 />
             </XStack>
 
@@ -48,6 +76,8 @@ export default function CustomizeStore() {
                     backgroundColor="transparent"
                     borderWidth={0}
                     paddingLeft="$2"
+                    value={country}
+                    onChangeText={setCountry}
                 />
             </XStack>
 

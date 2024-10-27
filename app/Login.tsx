@@ -1,11 +1,17 @@
 import { useState } from 'react';
+import { User, users$ } from 'utils/db/users';
 import { YStack, XStack, Text, Input, Button } from 'tamagui';
 import { useFonts } from 'expo-font';
 import { Phone, Eye, EyeOff } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
+import { getUsersArray } from 'utils/db/users';
 
 export default function WelcomePage() {
     const router = useRouter();
+
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+
     const [fontsLoaded] = useFonts({
         Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     });
@@ -18,8 +24,24 @@ export default function WelcomePage() {
 
     function handleContinue() {
         // Implement continue functionality
+        if (!phone || !password) {
+            return;
+        }
+
+        const user = findUser(phone, password);
+        if (!user) {
+            return;
+        }
+
+        console.log('User found', user);
+
         router.replace('/(tabs)/');
     }
+
+    function findUser(phone: string, password: string) {
+        return (Object.values(users$.get()) as User[]).find((user: User) => user.phone === phone && user.password === password);
+    }
+
     return (
         <YStack flex={1} padding="$4" backgroundColor="white" space="$4">
             <YStack space="$2" marginTop="$8">
@@ -41,6 +63,8 @@ export default function WelcomePage() {
                         borderWidth={0}
                         paddingLeft="$2"
                         keyboardType="phone-pad"
+                        value={phone}
+                        onChangeText={(text) => setPhone(text)}
                     />
                 </XStack>
 
@@ -52,6 +76,8 @@ export default function WelcomePage() {
                             secureTextEntry={!showPassword}
                             backgroundColor="transparent"
                             borderWidth={0}
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
                         />
                     </XStack>
                     <Button

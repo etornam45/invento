@@ -1,5 +1,4 @@
 import { Paragraph, ScrollView, View } from 'tamagui';
-import DailySales from 'components/cards/dailysales';
 import SalesCard, { salesData } from 'components/cards/SalesCard';
 import { FlatList } from 'react-native';
 import { useEffect } from 'react';

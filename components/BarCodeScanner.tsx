@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react';
 import Svg, { Polygon } from 'react-native-svg';
 import { Flashlight, FlashlightOff } from '@tamagui/lucide-icons';
 
-export default function BarCodeScanner() {
+interface BarCodeScannerProps {
+  aspectRatio?: number;
+}
+
+export default function BarCodeScanner({aspectRatio}) {
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
   const [scannedCodes, setScannedCodes] = useState<Code[]>([]);
@@ -32,13 +36,13 @@ export default function BarCodeScanner() {
     return () => clearTimeout(timer); // Cleanup on unmount or when dependencies change
   }, [isScanning]);
 
-  if (!hasPermission) return <PermissionsPage requestPerm={requestPermission} />;
+  if (!hasPermission) return <PermissionsPage aspectRatio={aspectRatio} requestPerm={requestPermission} />;
   if (device == null) return <NoCameraDeviceError />;
 
   return (
     <View overflow='hidden' m='$3.5' br={12} position='relative'>
       <Camera
-        style={{ aspectRatio: 3 / 2 }}
+        style={{ aspectRatio: aspectRatio ?? 3 / 4 }}
         device={device}
         isActive={true}
         codeScanner={codeScanner}
@@ -76,7 +80,7 @@ export default function BarCodeScanner() {
   );
 }
 
-const PermissionsPage = ({ requestPerm }) => (
+const PermissionsPage = ({ requestPerm, aspectRatio }) => (
   <View p='$3'><View aspectRatio={3 / 2} space w='100%' jc='center' ai='center' borderWidth={1} borderColor='gray' br={12}>
     <Text>Camera permission required</Text>
     <Button bg='$white1' onPress={requestPerm}>Start Camera</Button>

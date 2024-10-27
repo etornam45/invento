@@ -70,6 +70,7 @@ function RootLayoutNav() {
         <Stack.Screen
           name="(tabs)"
           options={{
+            title: 'Home',
             headerShown: false,
           }}
         />
@@ -92,6 +93,13 @@ function RootLayoutNav() {
           name='Business'
           options={{
             // headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name='new_inventory'
+          options={{
+            title: 'New Inventory',
           }}
         />
 

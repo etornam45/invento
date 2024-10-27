@@ -4,6 +4,7 @@ import { Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, Text, Button, XStack, YStack, View, Anchor } from 'tamagui';
 import { ArrowRight } from '@tamagui/lucide-icons';
+import { onboardingComplete$ } from 'utils/state/global';
 
 // Define the structure for each slide
 interface Slide {
@@ -40,6 +41,8 @@ export default function OnboardingScreen() {
     // complete 
     if (currentIndex === slides.length - 1) {
       console.log('Completed');
+      onboardingComplete$.setValue(true);
+
       router.navigate('/Register');
       return;
     }
@@ -83,11 +86,11 @@ export default function OnboardingScreen() {
         alignItems="center"
         justifyContent="center"
         p='$3.5'
-        // px='$'
+      // px='$'
       >
         <XStack padding="$4" px='$0' jc='space-between' ai='center' w='100%'>
           <View w='$1' h='$1' backgroundColor="" borderRadius={50} />
-          <Button  fontSize="$4" textAlign="center"
+          <Button fontSize="$4" textAlign="center"
             onPress={handleSkip}
             variant="outlined"
             borderColor='$colorTransparent'

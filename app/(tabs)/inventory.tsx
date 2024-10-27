@@ -1,14 +1,15 @@
 import SalesCard, { salesData } from "components/cards/SalesCard";
 import SearchBar from "components/cards/searchBar";
 import { FlatList } from "react-native";
-import { View } from "tamagui";
+import { ScrollView, View } from "tamagui";
 
 export default function Inventory() {
-    return (<View>
-        <SearchBar />
+    return (<ScrollView>
+        <SearchBar placeholder="Search for a product" />
         <FlatList
             style={{
                 padding: 15,
+                marginTop: -30,
             }}
             data={salesData}
             renderItem={({ item }) => <SalesCard
@@ -21,6 +22,7 @@ export default function Inventory() {
                 showBadge={false} />
             }
             keyExtractor={item => `${Math.random() * 1000}`}
+            scrollEnabled={false}
         />
-    </View>)
+    </ScrollView>)
 }
