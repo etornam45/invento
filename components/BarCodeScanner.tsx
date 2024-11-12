@@ -6,9 +6,11 @@ import { Flashlight, FlashlightOff } from '@tamagui/lucide-icons';
 
 interface BarCodeScannerProps {
   aspectRatio?: number;
+  shifts?: { x: number; y: number };
+  _onCodeScanned?: (code: string[]) => void;
 }
 
-export default function BarCodeScanner({aspectRatio}) {
+export default function BarCodeScanner({aspectRatio, shifts, _onCodeScanned}: BarCodeScannerProps) {
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
   const [scannedCodes, setScannedCodes] = useState<Code[]>([]);
@@ -18,6 +20,7 @@ export default function BarCodeScanner({aspectRatio}) {
     codeTypes: ['qr', 'ean-13', 'ean-8', 'upc-a', 'upc-e', 'code-39', 'code-93', 'code-128', 'itf', 'codabar', 'aztec', 'data-matrix', 'pdf-417'],
     onCodeScanned: (codes) => {
       setScannedCodes(codes);
+      _onCodeScanned?.(codes.map(code => code.value).filter((value): value is string => value !== undefined));
       setIsScanning(true); // Set scanning to true when codes are scanned
       console.log(`Scanned ${codes.map(code => JSON.stringify(code)).join('\n')} codes!`);
     },
@@ -59,7 +62,7 @@ export default function BarCodeScanner({aspectRatio}) {
         height: '100%',
       }}>
         {scannedCodes.map((code, index) => {
-          const points = code.corners ? code.corners.map(corner => `${corner.x - 50},${corner.y - 190}`).join(' ') : '';
+          const points = code.corners ? code.corners.map(corner => `${corner.x - (shifts?.x ?? 50)},${corner.y - (shifts?.y ?? 190)}`).join(' ') : '';
           return (
             <Polygon key={index} points={points} fill="rgba(255, 0, 0, 0.3)" stroke="red" strokeWidth={2} />
           );
@@ -81,7 +84,7 @@ export default function BarCodeScanner({aspectRatio}) {
 }
 
 const PermissionsPage = ({ requestPerm, aspectRatio }) => (
-  <View p='$3'><View aspectRatio={3 / 2} space w='100%' jc='center' ai='center' borderWidth={1} borderColor='gray' br={12}>
+  <View p='$3'><View aspectRatio={aspectRatio ?? 3 / 2} space w='100%' jc='center' ai='center' borderWidth={1} borderColor='gray' br={12}>
     <Text>Camera permission required</Text>
     <Button bg='$white1' onPress={requestPerm}>Start Camera</Button>
   </View></View>
