@@ -9761,6 +9761,7 @@ __metadata:
     react-dom: "npm:18.3.1"
     react-native: "npm:0.75.2"
     react-native-get-random-values: "npm:^1.11.0"
+    react-native-mmkv: "npm:^3.1.0"
     react-native-reanimated: "npm:~3.15.1"
     react-native-safe-area-context: "npm:4.10.9"
     react-native-screens: "npm:~3.34.0"
@@ -13078,6 +13079,16 @@ __metadata:
   peerDependencies:
     react: ^16.6.0 || ^17.0.0 || ^18.0.0
   checksum: 10/217bd0eaa61d426a512634369c70c44ce8b92127ec626dc40c65b72b1be1534ed3ed00ba2dd1a9ad77d1716ce8fd1e6db3f7209534303a652d9932a962d2c830
+  languageName: node
+  linkType: hard
+
+"react-native-mmkv@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "react-native-mmkv@npm:3.1.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/e601f3c36e3617402542b0dcbb59f039789fb4a409c3492d98444bad3173f8c07cf2dcf5c6ed1377e1f1c2162c3d834f80f3949fbc3d53e33c19b8c48862714c
   languageName: node
   linkType: hard
 

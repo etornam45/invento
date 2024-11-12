@@ -1,8 +1,9 @@
 import { observable } from "@legendapp/state";
-import { customSynced, generateId, supabase } from "utils/supa_legend";
+import { syncedSupabase } from "@legendapp/state/sync-plugins/supabase";
+import { generateId, supabase } from "utils/supa_legend";
 
 export const business$ = observable(
-    customSynced({
+    syncedSupabase({
         supabase,
         collection: 'business',
         select: (from) => from.select('id, name, phone, city, "last-sync", created_at, updated_at, deleted, user_id'),

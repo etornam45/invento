@@ -4,6 +4,7 @@ import { FlatList } from 'react-native';
 import { useEffect } from 'react';
 import DailySalesChart from 'components/cards/dailysales';
 import SoldItems from 'components/cards/soldItems';
+import InventoryCard from 'components/cards/InventoryCard';
 
 export default function Home() {
 
@@ -29,6 +30,31 @@ export default function Home() {
     </View>
   );
 
+  const renderTopProducts = () => (
+    <View 
+      style={{
+        // paddingLeft: 16,
+        // paddingRight: 16,
+        // marginBottom: 16,
+        backgroundColor: '#b7e8d1',  
+      }}
+    >
+      <Paragraph p='$3.5' 
+      py='$2.5'
+      fontWeight='900' fontSize={16}>
+        Top Products
+      </Paragraph>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ width: 12 }} />
+        <InventoryCard name='Crunchy Cookies' quantity={23} price={200} image={require('../../assets/images/Crunchy-cookies.png')} />
+        <InventoryCard name='Chocolate Cookies' quantity={15} price={150} image={require('../../assets/images/Chocolate-cookies.png')} />
+        <InventoryCard name='Vanilla Cookies' quantity={10} price={100} image={require('../../assets/images/Vanilla-cookies.png')} />
+        <InventoryCard name='Strawberry Cookies' quantity={5} price={50} image={require('../../assets/images/Strawberry-cookies.png')} />
+        <View style={{ width: 12 }} />
+      </ScrollView>
+    </View>
+  );
+
   const renderRecentActivities = ({ item }) => (
     <SalesCard
       name={item.name}
@@ -43,6 +69,7 @@ export default function Home() {
   return (
     <ScrollView>
       {renderDailySales()}
+      {renderTopProducts()}
       <Paragraph p='$3.5' fontWeight='900' fontSize={16}>
         Recent Activities
       </Paragraph>

@@ -9,9 +9,10 @@ interface SalesCardProp {
   badge: 'Sale' | 'Stock'
   timestamp: string
   showBadge?: boolean
+  barcode?: string
 }
 
-export default function SalesCard({ badge, name, paymentMethod, quantity, salePrice, timestamp, showBadge = true }: SalesCardProp) {
+export default function SalesCard({ badge, barcode ,name, paymentMethod, quantity, salePrice, timestamp, showBadge = true }: SalesCardProp) {
   return (<View mt='$3.5' p='$3.5' backgroundColor='$background' borderRadius={12}>
     <YStack gap='$1.5'>
       <XStack w='100%' jc='space-between' ai='flex-start'>
@@ -49,7 +50,7 @@ export default function SalesCard({ badge, name, paymentMethod, quantity, salePr
       <XStack>
         <XStack w='50%' gap='$1' ai='center'>
           <Barcode size={20} color='$blue12Light' />
-          <Text>131490132401</Text>
+          <Text>{barcode}</Text>
         </XStack>
         <XStack w='50%' gap='$1' ai='center'>
           <BadgeCent size={20} color='$blue12Light' />

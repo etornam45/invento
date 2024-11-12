@@ -4,7 +4,7 @@ import { Button, ScrollView, Separator, Text, View, XStack, YStack } from "tamag
 
 export default function SalesScanPage() {
     return (<View w='100%' flex={1}>
-        <BarCodeScanner aspectRatio={3 / 4} />
+        <BarCodeScanner aspectRatio={5 / 4} />
         <View >
             <XStack w='100%' jc='space-between' py='$1.5'>
                 <Text fontSize={20} ml='$3.5' fontWeight='600'>Scanned Items</Text>

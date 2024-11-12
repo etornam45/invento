@@ -27,7 +27,7 @@ export default function TabLayout() {
     }
     
     checkOnboarding();
-    console.log('checking onboarding');
+    console.log('checking onboarding', onboardingComplete$.getValue());
   }, [onboardingComplete$]);
 
   /**
