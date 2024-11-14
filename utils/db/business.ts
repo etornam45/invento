@@ -1,6 +1,8 @@
 import { observable } from "@legendapp/state";
 import { syncedSupabase } from "@legendapp/state/sync-plugins/supabase";
 import { generateId, supabase } from "utils/supa_legend";
+import { observablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export const business$ = observable(
     syncedSupabase({
@@ -10,13 +12,13 @@ export const business$ = observable(
         actions: ['read', 'create', 'update', 'delete'],
         realtime: true,
         activate: 'auto',
-        subscribe(params) {
-            
-        },
         // Persist data and pending changes locally
         persist: {
             name: 'business',
             retrySync: true, // Persist pending changes and retry
+            plugin: observablePersistAsyncStorage({
+                AsyncStorage,
+            }),
         },
         retry: {
             infinite: true, // Retry changes with exponential backoff

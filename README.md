@@ -83,3 +83,9 @@ Once `JAVA_HOME` and `ANDROID_HOME` are set, you can build the project. For exam
 ```bash
 npx expo run:android
 ```
+
+# Specifies the JVM arguments used for the daemon process. `graddle.properties` 
+# The setting is particularly useful for tweaking memory settings.
+# Default value: -Xmx512m -XX:MaxMetaspaceSize=256m
+# org.gradle.jvmargs=-XX:MaxPermSize=512m
+org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8

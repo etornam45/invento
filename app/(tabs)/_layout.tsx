@@ -28,7 +28,7 @@ export default function TabLayout() {
     
     checkOnboarding();
     console.log('checking onboarding', onboardingComplete$.getValue());
-  }, [onboardingComplete$]);
+  }, [ ]);
 
   /**
    * If onboarding is not complete, return an empty view.

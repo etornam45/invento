@@ -1,6 +1,8 @@
 import { observable } from "@legendapp/state";
 import { syncedSupabase } from "@legendapp/state/sync-plugins/supabase";
 import { generateId, supabase } from "utils/supa_legend";
+import { observablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export const inventory$ = observable(
     syncedSupabase({
@@ -13,6 +15,9 @@ export const inventory$ = observable(
         persist: {
             name: 'inventory',
             retrySync: true, // Persist pending changes and retry
+            plugin: observablePersistAsyncStorage({
+                AsyncStorage,
+            }),
         },
         retry: {
             infinite: true, // Retry changes with exponential backoff
