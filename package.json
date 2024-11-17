@@ -47,7 +47,7 @@
     "react-native-svg": "^15.7.1",
     "react-native-vision-camera": "^4.5.3",
     "react-native-web": "^0.19.12",
-    "tamagui": "^1.115.3",
+    "tamagui": "^1.116.15",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
