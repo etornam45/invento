@@ -4,7 +4,6 @@ import { Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, Text, Button, XStack, YStack, View, Anchor } from 'tamagui';
 import { ArrowRight } from '@tamagui/lucide-icons';
-import { onboardingComplete$ } from 'utils/state/global';
 
 // Define the structure for each slide
 interface Slide {
@@ -41,7 +40,7 @@ export default function OnboardingScreen() {
     // complete 
     if (currentIndex === slides.length - 1) {
       console.log('Completed');
-      onboardingComplete$.setValue(true);
+      // onboardingComplete$.setValue(true);
 
       router.navigate('/Register');
       return;

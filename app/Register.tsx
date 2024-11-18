@@ -3,9 +3,6 @@ import { Text, View, Input, Button, Checkbox, XStack, YStack } from 'tamagui';
 import { useFonts } from 'expo-font';
 import { Check, Eye, EyeOff, Phone, User } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import { addUser, deleteUsers, getUsers, getUsersArray } from 'utils/db/users';
-import { UserState$ } from 'utils/state/user';
-import { generateId } from 'utils/supa_legend';
 import { Pressable } from 'react-native';
 
 export default function AccountCreation() {
@@ -26,25 +23,6 @@ export default function AccountCreation() {
   }
 
   function handleContinue() {
-    if (!name || !phone || !password) {
-      return;
-    }
-    const id = generateId();
-    const user = {
-      id,
-      name,
-      phone,
-      password,
-      role: 'shop-keeper' as 'shop-keeper',
-    };
-    addUser(user);
-
-    UserState$.setUser(user);
-
-    console.log('Account created');
-    console.log(getUsers());
-    // deleteUsers();
-    router.navigate('/Business');
   }
 
   return (

@@ -3,10 +3,7 @@ import { Button, Input, Sheet, Text, TextArea, View, XStack, YStack } from "tama
 // import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useRef, useState } from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWindowDimensions } from "tamagui";
 import { Minus, Plus, X } from "@tamagui/lucide-icons";
-import { addProduct } from "utils/db/product";
-import { addInventory } from "utils/db/inventory";
 
 
 export default function NewInventory() {
@@ -35,20 +32,7 @@ export default function NewInventory() {
     }
 
     function Confirm() {
-        const product_id = addProduct({
-            name: 'Macbook Pro',
-            price: 999.89,
-            barcodes: ['1234567890', '0987654321'],
-        });
-
-        const inventory_id = addInventory({
-            price: 999.89,
-            product_id,
-            quantity: 1,
-            sales_price: 999.89,
-            business_id: '5b45a53b-5926-4c37-9a61-5167a5deded3',
-        });
-        console.log('Product Added');
+        
     }
 
     return (<View>

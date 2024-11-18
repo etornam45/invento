@@ -7,29 +7,11 @@ import { SolarChatRoundMoneyBold } from 'icons/sales'
 import { SolarBoxMinimalisticBold } from 'icons/box'
 import { SolarMoneyBagBold } from 'icons/wallet'
 import { SolarQrCodeBold } from 'icons/code_scanner'
-import { onboardingComplete$ } from 'utils/state/global'
 import { SolarAddCircleBold } from 'icons/plus'
 
 
 export default function TabLayout() {
   const theme = useTheme()
-  const router = useRouter();
-  
-  useEffect(() => {
-    async function checkOnboarding() {
-      onboardingComplete$.setValue(false);
-      // if (onboardingComplete !== 'true') {
-      if (onboardingComplete$.getValue() === false) {
-        onboardingComplete$.setValue(true);
-        router.navigate('/OnboardingScreen');
-        console.log('checking onboarding');
-      }
-    }
-    
-    checkOnboarding();
-    console.log('checking onboarding', onboardingComplete$.getValue());
-  }, [ ]);
-
   /**
    * If onboarding is not complete, return an empty view.
    */

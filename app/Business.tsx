@@ -3,9 +3,6 @@ import { useFonts } from 'expo-font';
 import { Home, MapPin } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { addBusiness, getBusiness, getBusinesses } from 'utils/db/business';
-import { users$ } from 'utils/db/users';
-import { UserState$ } from 'utils/state/user';
 
 export default function CustomizeStore() {
     const router = useRouter();
@@ -20,27 +17,6 @@ export default function CustomizeStore() {
     }
 
     function handleContinue() {
-        // Implement continue functionality
-        if (!business_name || !country) {
-            return;
-        }
-        console.log('Creating business');
-        let user = UserState$.getUser();
-        console.log({
-            name: business_name,
-            city: country,
-            user_id: user.id,
-            phone: user.phone ?? ''
-        })
-        addBusiness({
-            name: business_name,
-            city: country,
-            user_id: user.id,
-            phone: user.phone ?? ''
-        });
-
-        console.log('Business created');
-        console.log(getBusinesses());
         router.navigate('/Login');
     }
 
