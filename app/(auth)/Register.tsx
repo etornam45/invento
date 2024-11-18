@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Text, View, Input, Button, Checkbox, XStack, YStack } from 'tamagui';
 import { useFonts } from 'expo-font';
-import { Check, Eye, EyeOff, Phone, User } from '@tamagui/lucide-icons';
+import { Check, Eye, EyeOff, Mail, Phone, User } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
+import { supabase } from 'lib/supabase';
 
 export default function AccountCreation() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function AccountCreation() {
   });
 
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +23,23 @@ export default function AccountCreation() {
     return null;
   }
 
-  function handleContinue() {
+  async function handleContinue() {
+    const {data, error} = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          full_name: name,
+        }
+      },
+    })
+
+    if (error) {
+      alert(error.message)
+      return
+    }
+    console.log(data)
+    router.replace('/(auth)/Login') // Using replace to prevent user from going back to the login page
   }
 
   return (
@@ -58,16 +75,16 @@ export default function AccountCreation() {
           </XStack>
 
           <XStack alignItems="center" backgroundColor="$gray3" borderRadius="$4" px='$3' py='$1.5'>
-            <Phone color="$gray11" size={20} />
+            <Mail color="$gray11" size={20} />
             <Input
               flex={1}
-              placeholder="Phone Number"
+              placeholder="Email"
               backgroundColor="transparent"
               borderWidth={0}
               paddingLeft="$2"
               keyboardType="phone-pad"
-              value={phone}
-              onChangeText={(text) => setPhone(text)}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
             />
           </XStack>
 
@@ -109,8 +126,8 @@ export default function AccountCreation() {
           borderRadius="$4"
           height={50}
           marginTop="$4"
-          opacity={!agreed || name.length == 0 || phone.length == 0 || password.length == 0 ? 0.5 : 1}
-          disabled={!agreed || name.length == 0 || phone.length == 0 || password.length == 0}
+          opacity={!agreed || name.length == 0 || email.length == 0 || password.length == 0 ? 0.5 : 1}
+          disabled={!agreed || name.length == 0 || email.length == 0 || password.length == 0}
           onPress={handleContinue}
         >
           Continue
@@ -137,7 +154,7 @@ export default function AccountCreation() {
 
         <XStack space="$2" marginTop="auto">
           <Text color="$gray11">Already have an account?</Text>
-          <Pressable onPress={() => router.navigate('/Login')}>
+          <Pressable onPress={() => router.navigate('/(auth)/Login')}>
             <Text color="$blue10">Login</Text>
           </Pressable>
         </XStack>

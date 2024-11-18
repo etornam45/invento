@@ -17,7 +17,7 @@ export default function CustomizeStore() {
     }
 
     function handleContinue() {
-        router.navigate('/Login');
+        router.navigate('/(auth)/Login');
     }
 
     return (

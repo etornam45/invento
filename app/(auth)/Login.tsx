@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { YStack, XStack, Text, Input, Button } from 'tamagui';
+import { YStack, XStack, Text, Input, Button, Anchor } from 'tamagui';
 import { useFonts } from 'expo-font';
-import { Phone, Eye, EyeOff } from '@tamagui/lucide-icons';
-import { useRouter } from 'expo-router';
+import { Phone, Eye, EyeOff, Mail } from '@tamagui/lucide-icons';
+import { supabase } from 'lib/supabase';
+import { router } from 'expo-router';
 
 export default function WelcomePage() {
-    const router = useRouter();
 
-    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const [fontsLoaded] = useFonts({
@@ -20,7 +20,17 @@ export default function WelcomePage() {
         return null;
     }
 
-    function handleContinue() {
+    async function handleContinue() {
+        const {data, error} = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+        })
+        if (error) {
+            alert(error.message === 'Email not confirmed'? 'Please confirm your email before logging in' : error.message)
+            return
+        }
+
+        router.replace('/(tabs)') // Using replace to prevent user from going back to the login page
     }
 
     return (
@@ -36,16 +46,16 @@ export default function WelcomePage() {
 
             <YStack space="$4" marginTop="$4">
                 <XStack alignItems="center" backgroundColor="$gray3" borderRadius="$4" padding="$1.5" px='$3'>
-                    <Phone color="$gray11" size={20} />
+                    <Mail color="$gray11" size={20} />
                     <Input
                         flex={1}
-                        placeholder="Phone Number"
+                        placeholder="Email eg. example@gmail.com"
                         backgroundColor="transparent"
                         borderWidth={0}
                         paddingLeft="$2"
                         keyboardType="phone-pad"
-                        value={phone}
-                        onChangeText={(text) => setPhone(text)}
+                        value={email}
+                        onChangeText={(text) => setEmail(text)}
                     />
                 </XStack>
 
@@ -99,6 +109,12 @@ export default function WelcomePage() {
             >
                 <Text marginLeft="$2">Continue with Google</Text>
             </Button>
+            <Text color="$gray11" textAlign="center" marginTop="$4">
+                Don't have an account?{' '}
+                <Anchor onPress={() => router.push('/(auth)/Register')} color="$blue10" marginTop="$4">
+                Create an account
+            </Anchor>
+            </Text>
         </YStack>
     );
 }
