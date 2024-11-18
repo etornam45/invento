@@ -76,21 +76,21 @@ function RootLayoutNav() {
         />
 
         <Stack.Screen
-          name='Login'
+          name='(auth)/Login'
           options={{
             headerShown: false,
           }}
         />
 
         <Stack.Screen
-          name='Register'
+          name='(auth)/Register'
           options={{
             headerShown: false,
           }}
         />
 
         <Stack.Screen
-          name='Business'
+          name='(auth)/Business'
           options={{
             // headerShown: false,
           }}
