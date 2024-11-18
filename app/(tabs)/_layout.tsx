@@ -1,7 +1,6 @@
 import { Link, Tabs, useRouter } from 'expo-router'
 import { Text, useTheme, View } from 'tamagui'
 import { Pressable } from 'react-native'
-import { useEffect, useState } from 'react'
 import { SolarHomeAngleBold } from 'icons/home'
 import { SolarChatRoundMoneyBold } from 'icons/sales'
 import { SolarBoxMinimalisticBold } from 'icons/box'

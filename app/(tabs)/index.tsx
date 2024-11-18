@@ -1,16 +1,37 @@
 import { Paragraph, ScrollView, View } from 'tamagui';
 import SalesCard, { salesData } from 'components/cards/SalesCard';
 import { FlatList } from 'react-native';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import DailySalesChart from 'components/cards/dailysales';
 import SoldItems from 'components/cards/soldItems';
 import InventoryCard from 'components/cards/InventoryCard';
+import { Session } from '@supabase/supabase-js';
+import { supabase } from 'lib/supabase';
+import { router } from 'expo-router';
 
 export default function Home() {
 
   useEffect(() => {
-    console.log('Home screen mounted');
-  }, []);
+    // router.navigate('/(auth)/Login');
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      UserLoggedIn(session);
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+
+      UserLoggedIn(session);
+    })
+  }, [])
+
+
+  function UserLoggedIn(session: Session | null) {
+    if (!session?.user) {
+      console.log('User not logged in');
+      router.navigate('/(auth)/Login');
+      return;
+    }
+    console.log('User logged in');
+  }
 
   const renderDailySales = () => (
     <View>
@@ -31,17 +52,17 @@ export default function Home() {
   );
 
   const renderTopProducts = () => (
-    <View 
+    <View
       style={{
         // paddingLeft: 16,
         // paddingRight: 16,
         // marginBottom: 16,
-        backgroundColor: '#b7e8d1',  
+        backgroundColor: '#b7e8d1',
       }}
     >
-      <Paragraph p='$3.5' 
-      py='$2.5'
-      fontWeight='900' fontSize={16}>
+      <Paragraph p='$3.5'
+        py='$2.5'
+        fontWeight='900' fontSize={16}>
         Top Products
       </Paragraph>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
