@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, FlatList } from 'react-native';
 import SearchBar from 'components/cards/searchBar';
-import { productsCollection } from 'model';
+import { inventoryCollection, productsCollection } from 'model';
 import Products from 'model/db/products';
 import InventoryCard from 'components/cards/InventoryCard';
 import { withObservables } from '@nozbe/watermelondb/react';
+import Inventory from 'model/db/inventory';
 
 
-const Inventory = ({products}: {products: Products[]}) => {
-    console.log(products);
-    return (
+const InventoryPage = ({ inventory }: { inventory: Inventory[] }) => {
+    return ( 
         <ScrollView>
             <SearchBar placeholder="Search for a product" />
             <FlatList
@@ -18,15 +18,15 @@ const Inventory = ({products}: {products: Products[]}) => {
                     marginTop: -10,
                 }}
                 numColumns={2}
-                data={products}
+                data={inventory}
                 renderItem={({ item }) => {
-                    console.log(item);
-                    return(
-                    <InventoryCard
-                        key={item.id}
-                        products={item}
-                    />
-                )}}
+                    return (
+                        <InventoryCard
+                            key={item.id}
+                            inventory={item}
+                        />
+                    )
+                }}
                 keyExtractor={(item) => item.id}
                 scrollEnabled={false}
             />
@@ -36,7 +36,7 @@ const Inventory = ({products}: {products: Products[]}) => {
 
 
 const enhance = withObservables([], () => ({
-    products: productsCollection.query().observe(),
+    inventory: inventoryCollection.query().observe(),
 }));
 
-export default enhance(Inventory);
+export default enhance(InventoryPage);
