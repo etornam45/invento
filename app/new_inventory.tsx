@@ -4,6 +4,8 @@ import { Button, Input, Sheet, Text, TextArea, View, XStack, YStack } from "tama
 import { useCallback, useMemo, useRef, useState } from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Minus, Plus, X } from "@tamagui/lucide-icons";
+import database from "model";
+import Products from "model/db/products";
 
 
 export default function NewInventory() {
@@ -12,7 +14,7 @@ export default function NewInventory() {
     const [snapPoints, setSnapPoints] = useState([30]);
     const [scannedCode, setScannedCode] = useState<Set<string>>(new Set());
 
-    const [product, setProduct] = useState({
+    const [_product, setProduct] = useState({
         name: '',
         description: '',
         quantity: 0,
@@ -20,7 +22,7 @@ export default function NewInventory() {
     });
 
     function handleProductChange(key: string, value: string | number) {
-        setProduct({ ...product, [key]: value });
+        setProduct({ ..._product, [key]: value });
     }
 
     function handleCodeScanned(code: string[]) {
@@ -31,8 +33,19 @@ export default function NewInventory() {
         setSnapPoints([90]);
     }
 
-    function Confirm() {
+    async function Confirm() {
+        const productCollection = database.get<Products>('products');
         
+        await database.write(async () => {
+            await productCollection.create((product) => {
+                product.name = _product.name;
+                product.description = _product.description;
+                product.barcode = Array.from(['6723233034'])?.map((code) => code).join(', ');
+            });
+        });
+
+        const products = await productCollection.query().fetch();
+        console.log(products);
     }
 
     return (<View>
@@ -66,7 +79,7 @@ export default function NewInventory() {
                                     <Input
                                         placeholder="Product Name"
                                         flex={1}
-                                        value={product.name}
+                                        value={_product.name}
                                         onChangeText={(text) => handleProductChange('name', text)}
                                     />
                                 </XStack>
@@ -74,7 +87,7 @@ export default function NewInventory() {
                                     <TextArea
                                         placeholder="Product Description"
                                         flex={1}
-                                        value={product.description}
+                                        value={_product.description}
                                         onChangeText={(text) => handleProductChange('description', text)}
                                     />
                                 </XStack>
@@ -83,20 +96,20 @@ export default function NewInventory() {
                                         placeholder="Product Quantity"
                                         flex={1}
                                         keyboardType="numeric"
-                                        value={product.quantity.toString()}
+                                        value={_product.quantity.toString()}
                                         onChangeText={(text) => handleProductChange('quantity', parseInt(text))}
                                     />
                                     <Button
                                         px="$3"
                                         py="$2"
-                                        onPress={() => handleProductChange('quantity', product.quantity - 1)}
+                                        onPress={() => handleProductChange('quantity', _product.quantity - 1)}
                                     >
                                         <Minus />
                                     </Button>
                                     <Button
                                         px="$3"
                                         py="$2"
-                                        onPress={() => handleProductChange('quantity', product.quantity + 1)}
+                                        onPress={() => handleProductChange('quantity', _product.quantity + 1)}
                                     >
                                         <Plus />
                                     </Button>
@@ -106,7 +119,7 @@ export default function NewInventory() {
                                         placeholder="Product Price"
                                         flex={1}
                                         keyboardType="numeric"
-                                        value={product.price.toString()}
+                                        value={_product.price.toString()}
                                         onChangeText={(text) => handleProductChange('price', parseFloat(text))}
                                     />
                                 </XStack>
