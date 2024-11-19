@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { YStack, XStack, Text, Input, Button, Anchor } from 'tamagui';
 import { useFonts } from 'expo-font';
 import { Phone, Eye, EyeOff, Mail } from '@tamagui/lucide-icons';
@@ -6,6 +6,28 @@ import { supabase } from 'lib/supabase';
 import { router } from 'expo-router';
 
 export default function WelcomePage() {
+
+    // useEffect(() => {
+    //     supabase.auth.getSession().then(({ data: { session } }) => {
+    //         if (session) {
+    //             router.replace('/(tabs)')
+    //             return
+    //         }
+    //     })
+
+    //     supabase.auth.onAuthStateChange((_event, session) => {
+    //         if (session) {
+    //             router.replace('/(tabs)') 
+    //             return
+    //         }
+    //     })
+    // })
+
+    /**TODO
+     * Remove the above code to prevent future bugs 
+     * Where user is redirected back and 
+     * forth between the login page and the home page
+     */
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,12 +43,12 @@ export default function WelcomePage() {
     }
 
     async function handleContinue() {
-        const {data, error} = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email: email,
             password: password,
         })
         if (error) {
-            alert(error.message === 'Email not confirmed'? 'Please confirm your email before logging in' : error.message)
+            alert(error.message === 'Email not confirmed' ? 'Please confirm your email before logging in' : error.message)
             return
         }
 
@@ -112,8 +134,8 @@ export default function WelcomePage() {
             <Text color="$gray11" textAlign="center" marginTop="$4">
                 Don't have an account?{' '}
                 <Anchor onPress={() => router.push('/(auth)/Register')} color="$blue10" marginTop="$4">
-                Create an account
-            </Anchor>
+                    Create an account
+                </Anchor>
             </Text>
         </YStack>
     );
