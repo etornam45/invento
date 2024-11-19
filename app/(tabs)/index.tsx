@@ -30,7 +30,7 @@ export default function Home() {
       router.navigate('/(auth)/Login');
       return;
     }
-    console.log('User logged in');
+    console.log('User logged in', session?.user.email, session?.user.id);
   }
 
   const renderDailySales = () => (
@@ -54,9 +54,6 @@ export default function Home() {
   const renderTopProducts = () => (
     <View
       style={{
-        // paddingLeft: 16,
-        // paddingRight: 16,
-        // marginBottom: 16,
         backgroundColor: '#b7e8d1',
       }}
     >
@@ -67,10 +64,10 @@ export default function Home() {
       </Paragraph>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ width: 12 }} />
-        <InventoryCard name='Crunchy Cookies' quantity={23} price={200} image={require('../../assets/images/Crunchy-cookies.png')} />
+        {/* <InventoryCard name='Crunchy Cookies' quantity={23} price={200} image={require('../../assets/images/Crunchy-cookies.png')} />
         <InventoryCard name='Chocolate Cookies' quantity={15} price={150} image={require('../../assets/images/Chocolate-cookies.png')} />
         <InventoryCard name='Vanilla Cookies' quantity={10} price={100} image={require('../../assets/images/Vanilla-cookies.png')} />
-        <InventoryCard name='Strawberry Cookies' quantity={5} price={50} image={require('../../assets/images/Strawberry-cookies.png')} />
+        <InventoryCard name='Strawberry Cookies' quantity={5} price={50} image={require('../../assets/images/Strawberry-cookies.png')} /> */}
         <View style={{ width: 12 }} />
       </ScrollView>
     </View>
