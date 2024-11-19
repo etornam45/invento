@@ -4,7 +4,7 @@ import { Button, Input, Sheet, Text, TextArea, View, XStack, YStack } from "tama
 import { useCallback, useMemo, useRef, useState } from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Minus, Plus, X } from "@tamagui/lucide-icons";
-import database from "model";
+import database, { inventoryCollection } from "model";
 import Products from "model/db/products";
 
 
@@ -12,46 +12,54 @@ export default function NewInventory() {
 
     const [open, setOpen] = useState(true);
     const [snapPoints, setSnapPoints] = useState([30]);
-    const [scannedCode, setScannedCode] = useState<Set<string>>(new Set());
+    const [scannedCode, setScannedCode] = useState<string>('');
 
-    const [_product, setProduct] = useState({
-        name: '',
-        description: '',
-        quantity: 0,
-        price: 0,
-    });
+    const [_name, setName] = useState('');
+    const [_description, setDescription] = useState('');
+    const [_quantity, setQuantity] = useState(0);
+    const [_price, setPrice] = useState(0);
 
-    function handleProductChange(key: string, value: string | number) {
-        setProduct({ ..._product, [key]: value });
-    }
-
-    function handleCodeScanned(code: string[]) {
-        // if (snapPoints[0] === 90) return;
-        setScannedCode(new Set(code));
-        setScannedCode(new Set([...scannedCode, ...code]));
-        // setOpen(true);
+    function handleCodeScanned(code: string) {
+        console.log(code);
+        setScannedCode(code);
         setSnapPoints([90]);
     }
 
     async function Confirm() {
         const productCollection = database.get<Products>('products');
-        
-        await database.write(async () => {
-            await productCollection.create((product) => {
-                product.name = _product.name;
-                product.description = _product.description;
-                product.barcode = Array.from(['6723233034'])?.map((code) => code).join(', ');
-            });
-        });
 
-        const products = await productCollection.query().fetch();
-        console.log(products);
+        await database.write(async () => {
+           try {
+             const $product = await productCollection.create((product) => {
+                 product.name = _name;
+                 product.description = _description;
+                 product.barcode = scannedCode;
+             });
+ 
+             const _inventory = await inventoryCollection.create((inventory) => {
+                 inventory.price = _price;
+                 inventory.stock = _quantity;
+                 inventory.business.set(null);
+                 inventory.productId = $product.id;
+             });
+           } catch (error) {
+                console.log(error);
+           }
+
+            setName('');
+            setDescription('');
+            setQuantity(0);
+            setPrice(0);
+            setScannedCode('');
+            setSnapPoints([30]);
+
+        });
     }
 
     return (<View>
         <BarCodeScanner aspectRatio={4 / 5}
             shifts={{ x: 50, y: 100 }}
-            _onCodeScanned={(code) => handleCodeScanned(code)}
+            _onCodeScanned={handleCodeScanned}
         />
         <SafeAreaView>
             <Sheet
@@ -70,25 +78,25 @@ export default function NewInventory() {
                     <YStack flex={1} h='100%' padding="$4" space="$4">
                         <Sheet.Handle bg={'black'} />
                         <Text fontWeight="bold" fontSize="$6">Scanned Product</Text>
-                        <Text>Barcode: {Array.from(scannedCode)?.map((code) => code).join(', ')}</Text>
+                        <Text>Barcode: {scannedCode}</Text>
 
 
-                        {scannedCode.size > 0 ? (
+                        {scannedCode.length > 0 ? (
                             <View space="$4">
                                 <XStack space="$4">
                                     <Input
                                         placeholder="Product Name"
                                         flex={1}
-                                        value={_product.name}
-                                        onChangeText={(text) => handleProductChange('name', text)}
+                                        value={_name}
+                                        onChangeText={setName}
                                     />
                                 </XStack>
                                 <XStack space="$4">
                                     <TextArea
                                         placeholder="Product Description"
                                         flex={1}
-                                        value={_product.description}
-                                        onChangeText={(text) => handleProductChange('description', text)}
+                                        value={_description}
+                                        onChangeText={setDescription}
                                     />
                                 </XStack>
                                 <XStack space="$4">
@@ -96,20 +104,20 @@ export default function NewInventory() {
                                         placeholder="Product Quantity"
                                         flex={1}
                                         keyboardType="numeric"
-                                        value={_product.quantity.toString()}
-                                        onChangeText={(text) => handleProductChange('quantity', parseInt(text))}
+                                        value={_quantity.toString()}
+                                        onChangeText={(text) => setQuantity(parseInt(text))}
                                     />
                                     <Button
                                         px="$3"
                                         py="$2"
-                                        onPress={() => handleProductChange('quantity', _product.quantity - 1)}
+                                        onPress={() => setQuantity(_quantity - 1)}
                                     >
                                         <Minus />
                                     </Button>
                                     <Button
                                         px="$3"
                                         py="$2"
-                                        onPress={() => handleProductChange('quantity', _product.quantity + 1)}
+                                        onPress={() => setQuantity(_quantity + 1)}
                                     >
                                         <Plus />
                                     </Button>
@@ -119,8 +127,8 @@ export default function NewInventory() {
                                         placeholder="Product Price"
                                         flex={1}
                                         keyboardType="numeric"
-                                        value={_product.price.toString()}
-                                        onChangeText={(text) => handleProductChange('price', parseFloat(text))}
+                                        value={_price.toString()}
+                                        onChangeText={(text) => setPrice(parseFloat(text))}
                                     />
                                 </XStack>
                             </View>
@@ -130,7 +138,7 @@ export default function NewInventory() {
                             <Button
                                 flex={1}
                                 theme="alt1"
-                                onPress={() => { setSnapPoints([30]); setScannedCode(new Set()) }}
+                                onPress={() => { setSnapPoints([30]); setScannedCode('') }}
                             >
                                 Scan Again
                             </Button>
