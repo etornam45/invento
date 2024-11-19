@@ -3,8 +3,9 @@ import { withObservables } from '@nozbe/watermelondb/react'
 import { Delete } from "@tamagui/lucide-icons";
 import Products from "model/db/products";
 import database from "model";
+import Inventory from "model/db/inventory";
 
-const InventoryCard = ({ product }: { product: Products }) => {
+const InventoryCard = ({ inventory, product }: { inventory: Inventory ,product: Products }) => {
     return (
         <View
             style={{
@@ -39,8 +40,8 @@ const InventoryCard = ({ product }: { product: Products }) => {
                         fontWeight: '500',
                     }}
                 >{product?.name}</Text>
-                <Text>{product?.barcode}</Text>
-                <Text>{product?.description}</Text>
+                <Text>GHC {inventory.price}</Text>
+                <Text>{inventory?.stock} units in stock</Text>
             </View>
             {/* <Button onPress={async () => {
                 console.log('delete')
@@ -56,8 +57,9 @@ const InventoryCard = ({ product }: { product: Products }) => {
     );
 }
 
-const enhance = withObservables(['products'], ({ products }) => ({
-    product: products,
+const enhance = withObservables(['inventory'], ({ inventory }) => ({
+    inventory,
+    product: inventory.product.observe(),
 }))
 
 export default enhance(InventoryCard)
