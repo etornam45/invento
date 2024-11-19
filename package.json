@@ -16,7 +16,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@legendapp/state": "^3.0.0-beta.13",
+    "@legendapp/state": "^2.1.15",
     "@nozbe/watermelondb": "^0.27.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/native": "^6.1.17",
@@ -36,7 +36,6 @@
     "expo-status-bar": "^1.12.1",
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
-    "quagga": "^0.12.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.75.2",
@@ -49,7 +48,8 @@
     "react-native-vision-camera": "^4.5.3",
     "react-native-web": "^0.19.12",
     "tamagui": "^1.115.3",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.6",

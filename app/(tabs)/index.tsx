@@ -8,18 +8,24 @@ import InventoryCard from 'components/cards/InventoryCard';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from 'lib/supabase';
 import { router } from 'expo-router';
+import database, { inventoryCollection } from 'model';
 
 export default function Home() {
 
   useEffect(() => {
     // router.navigate('/(auth)/Login');
     supabase.auth.getSession().then(({ data: { session } }) => {
-      UserLoggedIn(session);
+      // UserLoggedIn(session);
     })
 
     supabase.auth.onAuthStateChange((_event, session) => {
 
-      UserLoggedIn(session);
+      // UserLoggedIn(session);
+    })
+  
+    database.write(async () => { 
+      const __inventory = await inventoryCollection.query().fetch();
+      console.log(__inventory.map((inventory) => ({ id: inventory.id, price: inventory.price, stock: inventory.stock , product: inventory.productId })));
     })
   }, [])
 
