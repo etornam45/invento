@@ -17,9 +17,10 @@
   },
   "dependencies": {
     "@legendapp/state": "^3.0.0-beta.13",
+    "@nozbe/watermelondb": "^0.27.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/native": "^6.1.17",
-    "@supabase/supabase-js": "^2.45.6",
+    "@supabase/supabase-js": "^2.46.1",
     "@tamagui/config": "^1.115.3",
     "@tamagui/lucide-icons": "^1.115.3",
     "@tamagui/toast": "^1.115.3",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.6",
+    "@babel/plugin-proposal-decorators": "^7.25.9",
     "@expo/metro-config": "~0.18.4",
     "@expo/metro-runtime": "~3.2.1",
     "@tamagui/babel-plugin": "^1.115.3",
