@@ -1,6 +1,7 @@
 import { Q } from "@nozbe/watermelondb";
 import BarCodeScanner from "components/BarCodeScanner";
 import ScanedItem from "components/cards/ScanedItem";
+import StripSeparator from "components/strip_separators";
 import { scannedItemsStore } from "lib/stores/scannedItems";
 import database, { inventoryCollection, salesCollection, salesItemCollection } from "model";
 
@@ -39,6 +40,7 @@ export default function SalesScanPage() {
                         saleItem.price = item.price
                         saleItem.productId = item.inventory.productId
                         saleItem.saleId = _sales.id
+                        saleItem.inventoryId = item.inventory.id
                     })
 
                     await item.inventory.update((inv) => {
@@ -72,13 +74,13 @@ export default function SalesScanPage() {
                     {items.size === 0 && (
                         <View>
                             <Text fontSize={20} fontWeight='500' mb='$2.5' textAlign='center'>Scan an item to add to cart</Text>
-                            {stripSeparator()}
+                            {<StripSeparator/>}
                         </View>
                     )}
                     {Array.from(items).map((inv, index) => (
                         <Fragment key={index}>
                             <ScanedItem inventory={inv.inventory} />
-                            {index < items.size - 1 && stripSeparator()}
+                            {index < items.size - 1 && <StripSeparator/>}
                         </Fragment>
                     ))}
                 </ScrollView>
@@ -90,16 +92,3 @@ export default function SalesScanPage() {
     );
 }
 
-const stripSeparator = () => {
-    return (<XStack>
-        <View w={15} h={15} bg='$gray4' borderRadius={15}
-            style={{
-                position: 'absolute', top: -7, left: -15,
-            }} />
-        <Separator />
-        <View w={15} h={15} bg='$gray4' borderRadius={15}
-            style={{
-                position: 'absolute', top: -7, right: -15,
-            }} />
-    </XStack>)
-}
