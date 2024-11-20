@@ -10,6 +10,7 @@ export default class SalesItem extends Model {
     @field('sale_id') saleId!: string;
     @field('product_id') productId!: string;
     @field('business_id') businessId!: string;
+    @field('inventory_id') inventoryId!: string;
 
     @field('deleted') deleted!: boolean;
     @readonly @date('created_at') createdAt!: Date;
@@ -19,4 +20,6 @@ export default class SalesItem extends Model {
 
     @relation('products', 'product_id') product;
     @relation('sale', 'sale_id') sale;
+    @relation('business', 'business_id') business;
+    @relation('inventory', 'inventory_id') inventory;
 }
