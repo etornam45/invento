@@ -4,6 +4,7 @@ import { Delete } from "@tamagui/lucide-icons";
 import Products from "model/db/products";
 import database from "model";
 import Inventory from "model/db/inventory";
+import { router } from "expo-router";
 
 const InventoryCard = ({ inventory, product }: { inventory: Inventory ,product: Products }) => {
     return (
@@ -18,6 +19,8 @@ const InventoryCard = ({ inventory, product }: { inventory: Inventory ,product: 
                 aspectRatio: .8,
             }}
             space
+
+            onPress={() => router.push(`/inventory/${inventory.id}`)}
         >
             <View
                 style={{
