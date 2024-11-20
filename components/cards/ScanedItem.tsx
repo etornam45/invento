@@ -12,7 +12,7 @@ const ScanedItem = ({inventory, product}: {inventory: Inventory, product: Produc
         <View borderRadius={8} bg='$background' p='$2.5'>
             <XStack jc='space-between'>
                 <Text fontSize={20} fontWeight='600'>{product.name}</Text>
-                <Text fontSize={18}>GHC {getItem(inventory).price}</Text>
+                <Text fontSize={18}>GHC {getItem(inventory).price * getItem(inventory).quantity}</Text>
             </XStack>
 
             <XStack jc='space-between'>
