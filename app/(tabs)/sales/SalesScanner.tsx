@@ -2,9 +2,9 @@ import { Q } from "@nozbe/watermelondb";
 import BarCodeScanner from "components/BarCodeScanner";
 import ScanedItem from "components/cards/ScanedItem";
 import { scannedItemsStore } from "lib/stores/scannedItems";
-import database, { inventoryCollection } from "model";
-import Inventory from "model/db/inventory";
-import { Fragment, useState } from "react";
+import database, { inventoryCollection, salesCollection, salesItemCollection } from "model";
+
+import { Fragment } from "react";
 import { Button, ScrollView, Separator, Text, View, XStack, YStack } from "tamagui";
 
 export default function SalesScanPage() {
@@ -17,6 +17,41 @@ export default function SalesScanPage() {
                 if (prod.length > 0) {
                     add({inventory: prod[0], quantity: 1, price: prod[0].price})
                 }
+            } catch (error) {
+                console.log(error)
+            }
+        })
+    }
+
+    async function checkOut() {
+        await database.write(async() => {
+            try {
+                const _sales = await salesCollection.create((sale) => {
+                    sale.total = Array.from(items).reduce((acc, item) => acc + item.price * item.quantity, 0)
+                    sale.quantity = Array.from(items).reduce((acc, item) => acc + item.quantity, 0)
+                    sale.payment = 'cash'
+                })
+                console.log(_sales)
+
+                for (const item of items) {
+                    const __item = await salesItemCollection.create((saleItem) => {
+                        saleItem.quantity = item.quantity
+                        saleItem.price = item.price
+                        saleItem.productId = item.inventory.productId
+                        saleItem.saleId = _sales.id
+                    })
+
+                    await item.inventory.update((inv) => {
+                        inv.stock -= item.quantity
+                    }).then(() => {
+                        console.log('Inventory updated')
+                    }).catch((error) => {
+                        console.log(error)
+                    })
+
+                    console.log(__item.price, __item.quantity)
+                }
+
             } catch (error) {
                 console.log(error)
             }
@@ -48,7 +83,7 @@ export default function SalesScanPage() {
                     ))}
                 </ScrollView>
                 <View m='$3.5'>
-                    <Button w='100%' h='50' bg='$blue10' color='$white' fontSize={20} fontWeight='600'>Checkout</Button>
+                    <Button onPress={checkOut} w='100%' h='50' bg='$blue10' color='$white' fontSize={20} fontWeight='600'>Checkout</Button>
                 </View>
             </YStack>
         </View>
