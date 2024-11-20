@@ -40,17 +40,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name='sales'
         options={{
-          title: 'Sales',
           tabBarIcon: ({ color }) => <SolarChatRoundMoneyBold width={24} height={24} fill={color} />,
-          headerRight: () => (
-            <Link href="/SalesScanner" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <SolarQrCodeBold width={24} height={24}  marginRight={16} />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen

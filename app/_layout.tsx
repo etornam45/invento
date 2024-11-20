@@ -104,13 +104,6 @@ function RootLayoutNav() {
         />
 
         <Stack.Screen
-          name='SalesScanner'
-          options={{
-            title: 'BarCode Scanner'
-          }}
-        />
-
-        <Stack.Screen
           name="modal"
           options={{
             title: 'Tamagui + Expo',
