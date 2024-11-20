@@ -4,6 +4,7 @@ import { switchMap } from "@nozbe/watermelondb/utils/rx";
 import { BadgeCent, Barcode } from "@tamagui/lucide-icons";
 import sales from "app/(tabs)/sales";
 import { router } from "expo-router";
+import { timeAgo } from "lib/utils";
 import { salesItemCollection } from "model";
 import Products from "model/db/products";
 import Sale from "model/db/sales";
@@ -26,7 +27,7 @@ const SalesCard = ({ sale, salesItemCount }: SalesCardProp) => {
           </Text>
         </YStack>
         {<Text fontSize={12}>
-          {new Date(new Date().valueOf() - new Date(sale.createdAt).valueOf()).getMinutes()} min
+          {timeAgo(sale.createdAt)}
         </Text>}
       </XStack>
       <XStack>
