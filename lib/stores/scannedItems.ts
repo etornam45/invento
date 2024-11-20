@@ -21,8 +21,15 @@ interface ScannedItemsStore {
 }
 
 export const scannedItemsStore = create<ScannedItemsStore>((set) => ({
-    items: new Set(),
+    items: new Set<ScannedItem>(),
     add: (item) => set((state) => {
+        // find for the item.inventory.id in the state.items
+        const data = Array.from(state.items).find((i) => (i as ScannedItem).inventory.id === item.inventory.id);
+        if (data) {
+            // if found
+            return { items: state.items };
+        }
+
         state.items.add(item);
         return { items: state.items };
     }),
@@ -35,12 +42,18 @@ export const scannedItemsStore = create<ScannedItemsStore>((set) => ({
     increaseQuantity: (inventory, quantity) => set((state) => {
         const index = state.getIndexOf(inventory);
         const item = Array.from(state.items)[index];
+        if (item.quantity + quantity > inventory.stock) {
+            return { items: state.items };
+        }
         item.quantity += quantity;
         return { items: state.items };
     }),
     decreaseQuantity: (inventory, quantity) => set((state) => {
         const index = state.getIndexOf(inventory);
         const item = Array.from(state.items)[index];
+        if (item.quantity - quantity < 1) {
+            return { items: state.items };
+        }
         item.quantity -= quantity;
         return { items: state.items };
     }),
