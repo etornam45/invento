@@ -1,5 +1,5 @@
 import { Paragraph, ScrollView, View } from 'tamagui';
-import SalesCard, { salesData } from 'components/cards/SalesCard';
+import SalesCard from 'components/cards/SalesCard';
 import { FlatList } from 'react-native';
 import { useEffect, useState } from 'react';
 import DailySalesChart from 'components/cards/dailysales';
@@ -8,24 +8,24 @@ import InventoryCard from 'components/cards/InventoryCard';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from 'lib/supabase';
 import { router } from 'expo-router';
-import database, { inventoryCollection } from 'model';
+import database, { inventoryCollection, salesItemCollection } from 'model';
 
 export default function Home() {
 
   useEffect(() => {
     // router.navigate('/(auth)/Login');
     supabase.auth.getSession().then(({ data: { session } }) => {
-      // UserLoggedIn(session);
+      UserLoggedIn(session);
     })
 
     supabase.auth.onAuthStateChange((_event, session) => {
 
-      // UserLoggedIn(session);
+      UserLoggedIn(session);
     })
   
     database.write(async () => { 
-      const __inventory = await inventoryCollection.query().fetch();
-      console.log(__inventory.map((inventory) => ({ id: inventory.id, price: inventory.price, stock: inventory.stock , product: inventory.productId })));
+      // const items = await salesItemCollection.query().fetch()
+      // console.log(items)   
     })
   }, [])
 
@@ -97,14 +97,14 @@ export default function Home() {
       <Paragraph p='$3.5' fontWeight='900' fontSize={16}>
         Recent Activities
       </Paragraph>
-      <FlatList
+      {/* <FlatList
         data={salesData}
         style={{ paddingLeft: 16, paddingRight: 16, marginBottom: 36 }}
         renderItem={renderRecentActivities}
         keyExtractor={(item) => `${Math.random() * 10000}`} // Ensure each timestamp is unique
         contentContainerStyle={{ paddingBottom: 16 }} // Add padding for better visibility
         scrollEnabled={false}
-      />
+      /> */}
     </ScrollView>
   );
 }

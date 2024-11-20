@@ -11,10 +11,10 @@ export default function Layout() {
             options={{
                 title: 'Sales',
                 headerRight: () => (
-                    <Link href="sales/SalesScanner" asChild>
+                    <Link href="/sales/SalesScanner" asChild>
                         <Pressable>
                             {({ pressed }) => (
-                                <SolarQrCodeBold width={24} height={24} marginRight={16} />
+                                <SolarQrCodeBold width={24} height={24} fill='grey' />
                             )}
                         </Pressable>
                     </Link>
@@ -24,7 +24,7 @@ export default function Layout() {
         <Stack.Screen
             name="[sales]"
             options={{
-                title: 'Sale Details',
+                headerShown: false,
             }}
         />
     </Stack>;

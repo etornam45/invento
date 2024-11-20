@@ -49,25 +49,17 @@ export default function TabLayout() {
         options={{
           title: 'Inventory',
           tabBarIcon: ({ color }) => <SolarBoxMinimalisticBold fill={color} />,
-          headerRight: () => (
-            <Link href="/new_inventory" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <SolarAddCircleBold width={24} height={24}  marginRight={16} fill={theme.color.val} />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
         name="finance"
         options={{
           title: 'Finance',
-          tabBarIcon: ({ color }) => <SolarMoneyBagBold width={24} height={24}  fill={color} />,
+          tabBarIcon: ({ color }) => <SolarMoneyBagBold width={24} height={24} fill={color} />,
         }}
       />
-      
+
     </Tabs>
   )
 }
