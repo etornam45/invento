@@ -97,13 +97,6 @@ function RootLayoutNav() {
         />
 
         <Stack.Screen
-          name='new_inventory'
-          options={{
-            title: 'New Inventory',
-          }}
-        />
-
-        <Stack.Screen
           name="modal"
           options={{
             title: 'Tamagui + Expo',
