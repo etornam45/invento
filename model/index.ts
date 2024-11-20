@@ -46,3 +46,5 @@ export default database
 export const productsCollection = database.collections.get<Products>('products')
 export const businessCollection = database.collections.get<Business>('business')
 export const inventoryCollection = database.collections.get<Inventory>('inventory')
+export const salesCollection = database.collections.get<Sale>('sale')
+export const salesItemCollection = database.collections.get<SalesItem>('sales_item')  
