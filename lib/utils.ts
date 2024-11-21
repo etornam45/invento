@@ -1,3 +1,5 @@
+import Sale from "model/db/sales";
+
 export function findMostFrequentString(strings: string[]): string | null {
     if (strings.length === 0) return null;
 
@@ -50,3 +52,17 @@ export function timeAgo(date: Date): string {
         return `${Math.floor(years)} years ago`;
     }
 }
+
+
+
+
+const groupSaleByDay = (items: Sale[]): Record<string, Sale[]> => {
+    return items.reduce((groups, item) => {
+        const date = new Date(item.createdAt).toISOString().split("T")[0]; // Extract the date part
+        if (!groups[date]) {
+            groups[date] = [];
+        }
+        groups[date].push(item);
+        return groups;
+    }, {} as Record<string, Sale[]>);
+};
