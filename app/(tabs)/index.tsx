@@ -36,7 +36,6 @@ export default function Home() {
       router.navigate('/(auth)/Login');
       return;
     }
-    console.log('User logged in', session?.user.email, session?.user.id);
   }
 
   const renderDailySales = () => (
