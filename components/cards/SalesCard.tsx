@@ -1,145 +1,66 @@
+import { Q } from "@nozbe/watermelondb";
+import { withObservables } from "@nozbe/watermelondb/react";
+import { switchMap } from "@nozbe/watermelondb/utils/rx";
 import { BadgeCent, Barcode } from "@tamagui/lucide-icons";
+import sales from "app/(tabs)/sales";
+import { router } from "expo-router";
+import { timeAgo } from "lib/utils";
+import { salesItemCollection } from "model";
+import Products from "model/db/products";
+import Sale from "model/db/sales";
+import SalesItem from "model/db/sales_item";
+import { from, map, toArray } from "rxjs";
 import { Text, View, XStack, YStack } from "tamagui";
 
 interface SalesCardProp {
-  name: string;
-  salePrice: number;
-  quantity: number;
-  paymentMethod: 'Cash' | 'Momo',
-  badge: 'Sale' | 'Stock'
-  timestamp: string
-  showBadge?: boolean
-  barcode?: string
+  sale: Sale
+  salesItemCount: SalesItem[]
 }
 
-export default function SalesCard({ badge, barcode ,name, paymentMethod, quantity, salePrice, timestamp, showBadge = true }: SalesCardProp) {
-  return (<View mt='$3.5' p='$3.5' backgroundColor='$background' borderRadius={12}>
+const SalesCard = ({ sale, salesItemCount }: SalesCardProp) => {
+  return (<View mt='$3.5' p='$3.5' backgroundColor='$background' borderRadius={12} onPress={() => router.push(`/sales/${sale.id}`)}>
     <YStack gap='$1.5'>
       <XStack w='100%' jc='space-between' ai='flex-start'>
         <YStack  >
           <Text fontSize={15} fontWeight='bold'>
-            {name}
+            {salesItemCount.length} items
           </Text>
-          {showBadge && <Text fontSize={10}>
-            {new Date(new Date().valueOf() - new Date(timestamp).valueOf()).getMinutes()} min
-          </Text>}
         </YStack>
-        {showBadge &&
-          <View borderRadius={20} backgroundColor={badge == 'Sale' ? '$green10' : '$blue10'} px='$2'>
-            <Text color='$white1'>{badge}</Text>
-          </View>
-        }
-        {!showBadge && <Text fontSize={13}>
-          {new Date(new Date().valueOf() - new Date(timestamp).valueOf()).getMinutes()} min
+        {<Text fontSize={12}>
+          {timeAgo(sale.createdAt)}
         </Text>}
       </XStack>
       <XStack>
         <View w='50%'>
           <Text>
             <Text fontWeight='900'>GHC </Text>
-            {salePrice.toFixed(2)}
+            {sale.total.toFixed(2)}
           </Text>
         </View>
         <View w='50%'>
           <Text>
             <Text fontWeight='900'>QTY </Text>
-            {quantity}
+            {sale.quantity}
           </Text>
         </View>
       </XStack>
       <XStack>
         <XStack w='50%' gap='$1' ai='center'>
           <Barcode size={20} color='$blue12Light' />
-          <Text>{barcode}</Text>
+          <Text>{'barcode'}</Text>
         </XStack>
         <XStack w='50%' gap='$1' ai='center'>
           <BadgeCent size={20} color='$blue12Light' />
-          <Text>{paymentMethod}</Text>
+          <Text>{sale.payment}</Text>
         </XStack>
       </XStack>
     </YStack>
   </View>)
 }
 
-export const salesData: SalesCardProp[] = [
-  {
-    "badge": "Stock",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Cash",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  },
-  {
-    "badge": "Sale",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Cash",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  },
-  {
-    "badge": "Sale",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Cash",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  },
-  {
-    "badge": "Sale",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Cash",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  },
-  {
-    "badge": "Sale",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Cash",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  },
-  {
-    "badge": "Sale",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Cash",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  },
-  {
-    "badge": "Stock",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Momo",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  },
-  {
-    "badge": "Sale",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Cash",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  },
-  {
-    "badge": "Sale",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Cash",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  },
-  {
-    "badge": "Stock",
-    "name": "Pepsodent Chacoal",
-    "paymentMethod": "Cash",
-    "quantity": 2,
-    "salePrice": 13,
-    "timestamp": "2024-10-15T00:00:00Z",
-  }
-]
+const enhance = withObservables(['sale'], ({ sale }: { sale: Sale }) => ({
+  sale,
+  salesItemCount: salesItemCollection.query(Q.where('sale_id', sale.id)).observe()
+}))
+
+export default enhance(SalesCard);

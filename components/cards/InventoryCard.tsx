@@ -1,9 +1,12 @@
-import { Image, Text, View } from "tamagui";
+import { Button, Image, Text, View } from "tamagui";
+import { withObservables } from '@nozbe/watermelondb/react'
+import { Delete } from "@tamagui/lucide-icons";
+import Products from "model/db/products";
+import database from "model";
+import Inventory from "model/db/inventory";
+import { router } from "expo-router";
 
-export default function InventoryCard({
-    name, quantity, price,
-    image,
-}: { name: string, quantity: number, price: number, image: string }) {
+const InventoryCard = ({ inventory, product }: { inventory: Inventory ,product: Products }) => {
     return (
         <View
             style={{
@@ -14,8 +17,10 @@ export default function InventoryCard({
                 margin: 5,
                 maxWidth: '48%',
                 aspectRatio: .8,
-            }} 
+            }}
             space
+
+            onPress={() => router.push(`/inventory/${inventory.id}`)}
         >
             <View
                 style={{
@@ -29,7 +34,7 @@ export default function InventoryCard({
                         aspectRatio: 1,
                         height: 100
                     }}
-                    src={image} />
+                    src={require('../../assets/images/Crunchy-cookies.png')} />
             </View>
             <View space='$1'>
                 <Text
@@ -37,10 +42,27 @@ export default function InventoryCard({
                         fontSize: 18,
                         fontWeight: '500',
                     }}
-                >{name}</Text>
-                <Text>GHC {price}</Text>
-                <Text>{quantity} in stock</Text>
+                >{product?.name}</Text>
+                <Text>GHC {inventory.price}</Text>
+                <Text>{inventory?.stock} units in stock</Text>
             </View>
+            {/* <Button onPress={async () => {
+                console.log('delete')
+                await database.write(async () => {
+                    await product.destroyPermanently()
+                })
+            }}>
+                <Delete
+                    color={'red'}
+                />
+            </Button> */}
         </View>
     );
 }
+
+const enhance = withObservables(['inventory'], ({ inventory }) => ({
+    inventory,
+    product: inventory.product.observe(),
+}))
+
+export default enhance(InventoryCard)

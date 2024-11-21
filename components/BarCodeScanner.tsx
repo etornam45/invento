@@ -3,41 +3,45 @@ import { Camera, Code, CodeScanner, useCameraDevice, useCameraPermission } from 
 import { useEffect, useState } from 'react';
 import Svg, { Polygon } from 'react-native-svg';
 import { Flashlight, FlashlightOff } from '@tamagui/lucide-icons';
+import { findMostFrequentString } from 'lib/utils';
 
 interface BarCodeScannerProps {
   aspectRatio?: number;
   shifts?: { x: number; y: number };
-  _onCodeScanned?: (code: string[]) => void;
+  _onCodeScanned?: (code: string) => void;
 }
 
-export default function BarCodeScanner({aspectRatio, shifts, _onCodeScanned}: BarCodeScannerProps) {
+export default function BarCodeScanner({ aspectRatio, shifts, _onCodeScanned }: BarCodeScannerProps) {
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
   const [scannedCodes, setScannedCodes] = useState<Code[]>([]);
-  const [isScanning, setIsScanning] = useState(false);
   const [torch, setTorch] = useState<'off' | 'on'>('off');
+
   const codeScanner: CodeScanner = {
     codeTypes: ['qr', 'ean-13', 'ean-8', 'upc-a', 'upc-e', 'code-39', 'code-93', 'code-128', 'itf', 'codabar', 'aztec', 'data-matrix', 'pdf-417'],
     onCodeScanned: (codes) => {
-      setScannedCodes(codes);
-      _onCodeScanned?.(codes.map(code => code.value).filter((value): value is string => value !== undefined));
-      setIsScanning(true); // Set scanning to true when codes are scanned
-      console.log(`Scanned ${codes.map(code => JSON.stringify(code)).join('\n')} codes!`);
+      setScannedCodes(prev => [...prev, ...codes]);
     },
     regionOfInterest: { x: 0.1, y: 0.1, width: 0.8, height: 0.8 },
   };
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isScanning) {
-      timer = setTimeout(() => {
-        setScannedCodes([]); // Clear scanned codes after 3 seconds of inactivity
-        setIsScanning(false); // Reset scanning status
-      }, 4000); // Adjust timeout duration as needed
-    }
-    console.log('Has torch: ', device?.hasTorch);
-    return () => clearTimeout(timer); // Cleanup on unmount or when dependencies change
-  }, [isScanning]);
+    if (scannedCodes.length === 0) return;
+
+    const timer = setTimeout(() => {
+      const filteredValues = scannedCodes
+        .map(code => code.value)
+        .filter((value): value is string => value !== undefined);
+      if (_onCodeScanned) {
+        _onCodeScanned(findMostFrequentString(filteredValues) ?? '');
+      }
+      setScannedCodes([]); // Reset after processing
+    }, 100); // Debounce time
+
+    return () => clearTimeout(timer); // Cleanup
+  }, [scannedCodes, _onCodeScanned]);
+
+
 
   if (!hasPermission) return <PermissionsPage aspectRatio={aspectRatio} requestPerm={requestPermission} />;
   if (device == null) return <NoCameraDeviceError />;
@@ -68,7 +72,7 @@ export default function BarCodeScanner({aspectRatio, shifts, _onCodeScanned}: Ba
           );
         })}
       </Svg>
-      <Button
+      {device?.hasTorch ? (<Button
         onPress={() => setTorch(torch === 'on' ? 'off' : 'on')}
         style={{ position: 'absolute', bottom: 16, right: 16 }}
         br={30}
@@ -78,7 +82,7 @@ export default function BarCodeScanner({aspectRatio, shifts, _onCodeScanned}: Ba
         bg={torch === 'on' ? '$blue10' : '$background'}
       >
         {torch === 'on' ? <Flashlight size={20} /> : <FlashlightOff size={20} />}
-      </Button>
+      </Button>) : (<></>)}
     </View>
   );
 }

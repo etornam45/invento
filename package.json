@@ -16,10 +16,11 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@legendapp/state": "^3.0.0-beta.13",
+    "@legendapp/state": "^2.1.15",
+    "@nozbe/watermelondb": "^0.27.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/native": "^6.1.17",
-    "@supabase/supabase-js": "^2.45.6",
+    "@supabase/supabase-js": "^2.46.1",
     "@tamagui/config": "^1.115.3",
     "@tamagui/lucide-icons": "^1.115.3",
     "@tamagui/toast": "^1.115.3",
@@ -35,7 +36,6 @@
     "expo-status-bar": "^1.12.1",
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
-    "quagga": "^0.12.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.75.2",
@@ -47,11 +47,13 @@
     "react-native-svg": "^15.7.1",
     "react-native-vision-camera": "^4.5.3",
     "react-native-web": "^0.19.12",
-    "tamagui": "^1.116.15",
-    "uuid": "^10.0.0"
+    "tamagui": "^1.115.3",
+    "uuid": "^10.0.0",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.6",
+    "@babel/plugin-proposal-decorators": "^7.25.9",
     "@expo/metro-config": "~0.18.4",
     "@expo/metro-runtime": "~3.2.1",
     "@tamagui/babel-plugin": "^1.115.3",

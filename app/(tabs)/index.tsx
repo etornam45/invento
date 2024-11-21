@@ -1,16 +1,42 @@
 import { Paragraph, ScrollView, View } from 'tamagui';
-import SalesCard, { salesData } from 'components/cards/SalesCard';
+import SalesCard from 'components/cards/SalesCard';
 import { FlatList } from 'react-native';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import DailySalesChart from 'components/cards/dailysales';
 import SoldItems from 'components/cards/soldItems';
 import InventoryCard from 'components/cards/InventoryCard';
+import { Session } from '@supabase/supabase-js';
+import { supabase } from 'lib/supabase';
+import { router } from 'expo-router';
+import database, { inventoryCollection, salesItemCollection } from 'model';
 
 export default function Home() {
 
   useEffect(() => {
-    console.log('Home screen mounted');
-  }, []);
+    // router.navigate('/(auth)/Login');
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      UserLoggedIn(session);
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+
+      UserLoggedIn(session);
+    })
+  
+    database.write(async () => { 
+      // const items = await salesItemCollection.query().fetch()
+      // console.log(items)   
+    })
+  }, [])
+
+
+  function UserLoggedIn(session: Session | null) {
+    if (!session?.user) {
+      console.log('User not logged in');
+      router.navigate('/(auth)/Login');
+      return;
+    }
+  }
 
   const renderDailySales = () => (
     <View>
@@ -31,25 +57,22 @@ export default function Home() {
   );
 
   const renderTopProducts = () => (
-    <View 
+    <View
       style={{
-        // paddingLeft: 16,
-        // paddingRight: 16,
-        // marginBottom: 16,
-        backgroundColor: '#b7e8d1',  
+        backgroundColor: '#b7e8d1',
       }}
     >
-      <Paragraph p='$3.5' 
-      py='$2.5'
-      fontWeight='900' fontSize={16}>
+      <Paragraph p='$3.5'
+        py='$2.5'
+        fontWeight='900' fontSize={16}>
         Top Products
       </Paragraph>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ width: 12 }} />
-        <InventoryCard name='Crunchy Cookies' quantity={23} price={200} image={require('../../assets/images/Crunchy-cookies.png')} />
+        {/* <InventoryCard name='Crunchy Cookies' quantity={23} price={200} image={require('../../assets/images/Crunchy-cookies.png')} />
         <InventoryCard name='Chocolate Cookies' quantity={15} price={150} image={require('../../assets/images/Chocolate-cookies.png')} />
         <InventoryCard name='Vanilla Cookies' quantity={10} price={100} image={require('../../assets/images/Vanilla-cookies.png')} />
-        <InventoryCard name='Strawberry Cookies' quantity={5} price={50} image={require('../../assets/images/Strawberry-cookies.png')} />
+        <InventoryCard name='Strawberry Cookies' quantity={5} price={50} image={require('../../assets/images/Strawberry-cookies.png')} /> */}
         <View style={{ width: 12 }} />
       </ScrollView>
     </View>
@@ -73,14 +96,14 @@ export default function Home() {
       <Paragraph p='$3.5' fontWeight='900' fontSize={16}>
         Recent Activities
       </Paragraph>
-      <FlatList
+      {/* <FlatList
         data={salesData}
         style={{ paddingLeft: 16, paddingRight: 16, marginBottom: 36 }}
         renderItem={renderRecentActivities}
         keyExtractor={(item) => `${Math.random() * 10000}`} // Ensure each timestamp is unique
         contentContainerStyle={{ paddingBottom: 16 }} // Add padding for better visibility
         scrollEnabled={false}
-      />
+      /> */}
     </ScrollView>
   );
 }
