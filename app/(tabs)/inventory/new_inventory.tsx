@@ -4,14 +4,16 @@ import { Button, Input, Sheet, Text, TextArea, View, XStack, YStack } from "tama
 import { useCallback, useMemo, useRef, useState } from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Minus, Plus, X } from "@tamagui/lucide-icons";
-import database, { inventoryCollection } from "model";
+import database, { inventoryCollection, productsCollection } from "model";
 import Products from "model/db/products";
+import { Q } from "@nozbe/watermelondb";
+import inventory from ".";
 
 
 export default function NewInventory() {
 
-    const [open, setOpen] = useState(true);
-    const [snapPoints, setSnapPoints] = useState([30]);
+    const [product_id, setProduct_id] = useState<string>('');
+    const [inventory_id, setInventory_id] = useState<string>('');
     const [scannedCode, setScannedCode] = useState<string>('');
 
     const [_name, setName] = useState('');
@@ -21,8 +23,29 @@ export default function NewInventory() {
 
     async function handleCodeScanned(code: string) {
         console.log(code);
+        await database.write(async () => {
+            try {
+                const product = await productsCollection.query(Q.where('barcode', code)).fetch();
+                if (product) {
+                    const inventory = await inventoryCollection.query(Q.where('product_id', product[0]?.id)).fetch();
+                    if (inventory) {
+                        setName(product[0].name);
+                        setDescription(product[0].description);
+                        setQuantity(inventory[0].stock);
+                        setPrice(inventory[0].price);
+                        setInventory_id(inventory[0].id);
+                        setProduct_id(product[0].id);
+                    } else {
+                        setName(product[0].name);
+                        setDescription(product[0].description);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+
+            }
+        });
         setScannedCode(code);
-        setSnapPoints([90]);
     }
 
     async function Confirm() {
@@ -30,18 +53,50 @@ export default function NewInventory() {
 
         await database.write(async () => {
             try {
-                const $product = await productCollection.create((product) => {
-                    product.name = _name;
-                    product.description = _description;
-                    product.barcode = scannedCode;
-                });
+                if (inventory.length > 0) {
+                    const _product = await productCollection.find(product_id);
+                    await _product.update((product) => {
+                        product.name = _name;
+                        product.description = _description;
+                        product.barcode = scannedCode;
+                    });
 
-                const _inventory = await inventoryCollection.create((inventory) => {
-                    inventory.price = _price;
-                    inventory.stock = _quantity;
-                    inventory.business.set(null);
-                    inventory.productId = $product.id;
-                });
+                    const _inventory = await inventoryCollection.find(inventory_id);
+                    await _inventory.update((inventory) => {
+                        inventory.price = _price;
+                        inventory.stock = _quantity;
+                    });
+                    console.log('updated');
+                } else if (product_id.length > 0) {
+                    const _product = await productCollection.find(product_id);
+                    await _product.update((product) => {
+                        product.name = _name;
+                        product.description = _description;
+                        product.barcode = scannedCode;
+                    });
+
+                    const _inventory = await inventoryCollection.create((inventory) => {
+                        inventory.price = _price;
+                        inventory.stock = _quantity;
+                        inventory.business.set(null);
+                        inventory.productId = product_id;
+                    });
+                    console.log('inventory created');
+                } else {
+                    const $product = await productCollection.create((product) => {
+                        product.name = _name;
+                        product.description = _description;
+                        product.barcode = scannedCode;
+                    });
+
+                    const _inventory = await inventoryCollection.create((inventory) => {
+                        inventory.price = _price;
+                        inventory.stock = _quantity;
+                        inventory.business.set(null);
+                        inventory.productId = $product.id;
+                    });
+                    console.log('product and inventory created');
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -51,8 +106,6 @@ export default function NewInventory() {
             setQuantity(0);
             setPrice(0);
             setScannedCode('');
-            setSnapPoints([30]);
-
         });
     }
 
