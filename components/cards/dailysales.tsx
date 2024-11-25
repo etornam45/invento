@@ -35,7 +35,7 @@ const DailySalesChart = ({ data, tooltip }: DailySalesChartProps) => {
                     >
                         <Text 
                         fontSize={11}
-                        color="$gray11">${tooltip ? `${tooltip}: ${item.value}` : item.value}</Text>
+                        color="$gray11">₵{tooltip ? `${tooltip}: ${item.value}` : item.value}</Text>
                         <View
                             backgroundColor="$blue10"
                             // width={`${(item.value / maxValue) * 100}%`}
