@@ -10,7 +10,7 @@ interface ScannedItem {
 interface ScannedItemsStore {
     items: Set<ScannedItem>;
     add: (item: ScannedItem) => void;
-    remove: (index: number) => void;
+    remove: (inventory: Inventory) => void;
     clear: () => void;
     getIndexOf: (inventory: Inventory) => number;
     increaseQuantity: (inventory: Inventory, quantity: number) => void;
@@ -18,6 +18,7 @@ interface ScannedItemsStore {
     getItem: (inventory: Inventory) => ScannedItem;
     getTotalPrice: () => number;
     getTotalQuantity: () => number;
+    isInCart: (inventory_id: string) => boolean;
 }
 
 export const scannedItemsStore = create<ScannedItemsStore>((set) => ({
@@ -33,7 +34,8 @@ export const scannedItemsStore = create<ScannedItemsStore>((set) => ({
         state.items.add(item);
         return { items: state.items };
     }),
-    remove: (index) => set((state) => {
+    remove: (inventory) => set((state) => {
+        const index = state.getIndexOf(inventory);
         state.items.delete(Array.from(state.items)[index]);
         return { items: state.items };
     }),
@@ -63,5 +65,6 @@ export const scannedItemsStore = create<ScannedItemsStore>((set) => ({
         return Array.from(state.items)[index] as ScannedItem;
     },
     getTotalPrice: () => scannedItemsStore.getState().items.reduce((acc: number, item: ScannedItem) => acc + (item.quantity * item.price), 0),
-    getTotalQuantity: () => scannedItemsStore.getState().items.reduce((acc: number, item: ScannedItem) => acc + item.quantity, 0)
+    getTotalQuantity: () => scannedItemsStore.getState().items.reduce((acc: number, item: ScannedItem) => acc + item.quantity, 0),
+    isInCart: (inventory_id) => Array.from(scannedItemsStore.getState().items).some((item) => (item as ScannedItem).inventory.id === inventory_id),
 }))
