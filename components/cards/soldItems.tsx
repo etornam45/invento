@@ -1,6 +1,17 @@
 import { Paragraph, Text, View, XStack, YStack } from "tamagui";
 
-export default function SoldItems() {
+export default function SoldItems({data}: {data: {
+    name: string,
+    value: number
+}[]}) {
+
+    // caluclate the percentage
+    const total = data.reduce((acc, item) => acc + item.value, 0)
+    const items = data.map(item => ({
+        name: item.name,
+        value: Math.round((item.value / total) * 100)
+    }))
+
     return <View
         p='$3.5'
         // mr='$3.5'
@@ -20,10 +31,7 @@ export default function SoldItems() {
         </XStack>
 
         <YStack space='$1.5'>
-            <ProductBar name="Black soap" persecnt={80}/>
-            <ProductBar name="Pepsodent Chacoal" persecnt={76}/>
-            <ProductBar name="Soda Biscuit" persecnt={40}/>
-            <ProductBar name="Nataraj Pencil" persecnt={10}/>
+            {items.map(item => <ProductBar key={item.name} name={item.name} persecnt={item.value} />)}
         </YStack>
     </View>
 }

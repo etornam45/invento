@@ -1,6 +1,6 @@
-import { Paragraph, ScrollView, View } from 'tamagui';
+import { Paragraph, ScrollView, View, XStack, YStack } from 'tamagui';
 import SalesCard from 'components/cards/SalesCard';
-import { FlatList } from 'react-native';
+import { FlatList, Pressable } from 'react-native';
 import { useEffect, useState } from 'react';
 import DailySalesChart from 'components/cards/dailysales';
 import SoldItems from 'components/cards/soldItems';
@@ -8,7 +8,12 @@ import InventoryCard from 'components/cards/InventoryCard';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from 'lib/supabase';
 import { router } from 'expo-router';
-import database, { inventoryCollection, salesItemCollection } from 'model';
+import database, { inventoryCollection, salesCollection, salesItemCollection } from 'model';
+import SolarBoxBoldDuotone from 'icons/SolarBoxBoldDuotone';
+import { SolarChatRoundMoneyBold } from 'icons/sales';
+import SolarClipboardTextBoldDuotone from 'icons/SolarClipboardTextBoldDuotone';
+import SolarMagniferLinear from 'icons/SolarMagniferLinear';
+import { Q } from '@nozbe/watermelondb';
 
 export default function Home() {
 
@@ -22,8 +27,8 @@ export default function Home() {
 
       UserLoggedIn(session);
     })
-  
-    database.write(async () => { 
+
+    database.write(async () => {
       // const items = await salesItemCollection.query().fetch()
       // console.log(items)   
     })
@@ -38,72 +43,178 @@ export default function Home() {
     }
   }
 
-  const renderDailySales = () => (
-    <View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <DailySalesChart data={[
-          { name: 'MON', value: 1500 },
-          { name: 'TUE', value: 800 },
-          { name: 'WED', value: 1200 },
-          { name: 'THUR', value: 2000 },
-          { name: 'FRI', value: 1800 },
-          { name: 'SAT', value: 1400 },
-          { name: 'SUN', value: 900 },
-        ]} />
-        <SoldItems />
-        <View style={{ width: 16 }} />
-      </ScrollView>
-    </View>
-  );
 
-  const renderTopProducts = () => (
-    <View
-      style={{
-        backgroundColor: '#b7e8d1',
-      }}
-    >
-      <Paragraph p='$3.5'
-        py='$2.5'
-        fontWeight='900' fontSize={16}>
-        Top Products
-      </Paragraph>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={{ width: 12 }} />
-        {/* <InventoryCard name='Crunchy Cookies' quantity={23} price={200} image={require('../../assets/images/Crunchy-cookies.png')} />
-        <InventoryCard name='Chocolate Cookies' quantity={15} price={150} image={require('../../assets/images/Chocolate-cookies.png')} />
-        <InventoryCard name='Vanilla Cookies' quantity={10} price={100} image={require('../../assets/images/Vanilla-cookies.png')} />
-        <InventoryCard name='Strawberry Cookies' quantity={5} price={50} image={require('../../assets/images/Strawberry-cookies.png')} /> */}
-        <View style={{ width: 12 }} />
-      </ScrollView>
-    </View>
-  );
 
-  const renderRecentActivities = ({ item }) => (
-    <SalesCard
-      name={item.name}
-      badge={item.badge}
-      paymentMethod={item.paymentMethod}
-      quantity={item.quantity}
-      salePrice={item.salePrice}
-      timestamp={item.timestamp}
-    />
-  );
 
   return (
     <ScrollView>
-      {renderDailySales()}
-      {renderTopProducts()}
-      <Paragraph p='$3.5' fontWeight='900' fontSize={16}>
-        Recent Activities
-      </Paragraph>
-      {/* <FlatList
-        data={salesData}
-        style={{ paddingLeft: 16, paddingRight: 16, marginBottom: 36 }}
-        renderItem={renderRecentActivities}
-        keyExtractor={(item) => `${Math.random() * 10000}`} // Ensure each timestamp is unique
-        contentContainerStyle={{ paddingBottom: 16 }} // Add padding for better visibility
-        scrollEnabled={false}
-      /> */}
+      <DailySales />
+      <QuickActions />
+      <SalesSummary />
     </ScrollView>
   );
+}
+
+
+const QuickActions = () => {
+
+  return (<XStack jc='space-between' p='$3.5'>
+    <Pressable onPress={() => router.navigate('/(tabs)/inventory/')}>
+      <YStack bg='$background' p='$3' br='$3'>
+        <SolarBoxBoldDuotone width={24} height={24} fill={'#2dadda'} />
+        <Paragraph>New Product</Paragraph>
+      </YStack>
+    </Pressable>
+    <Pressable onPress={() => router.navigate('/(tabs)/sales/')}>
+      <YStack bg='$background' p='$3' br='$3'>
+        <SolarClipboardTextBoldDuotone width={24} height={24} fill={'#2dadda'} />
+        <Paragraph>New Purchase</Paragraph>
+      </YStack>
+    </Pressable>
+    <Pressable>
+      <YStack bg='$background' p='$3' br='$3'>
+        <SolarMagniferLinear width={24} height={24} stroke={'#2dadda'} fill={'none'} />
+        <Paragraph>Find Product</Paragraph>
+      </YStack>
+    </Pressable>
+  </XStack>)
+}
+
+
+const DailySales = () => {
+
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const [dailySales, setDailySales] = useState<{
+    name: string,
+    value: number
+  }[]>([]); // daily sales for the last 7 days ie. sales made in the same day are added together
+
+  const [topItems, setTopItems] = useState<{
+    name: string,
+    value: number
+  } []>([]);
+  /**
+   * Mon - 100 -> (sale_1 = 10) + (sale_2 = 90)
+   */
+
+  useEffect(() => {
+    database.write(async () => {
+      try {
+        const sales = await salesCollection.query(
+          Q.unsafeSqlQuery(
+            `
+              SELECT 
+                strftime('%w', datetime(created_at / 1000, 'unixepoch')) AS weekday_number, 
+                CASE strftime('%w', datetime(created_at / 1000, 'unixepoch'))
+                    WHEN '0' THEN 'Sun'
+                    WHEN '1' THEN 'Mon'
+                    WHEN '2' THEN 'Tue'
+                    WHEN '3' THEN 'Wed'
+                    WHEN '4' THEN 'Thu'
+                    WHEN '5' THEN 'Fri'
+                    WHEN '6' THEN 'Sat'
+                END AS name,
+                SUM(total) AS value
+            FROM sale
+            WHERE datetime(created_at / 1000, 'unixepoch') >= DATE('now', '-7 days')
+            AND created_at IS NOT NULL
+            AND deleted = 0
+            GROUP BY weekday_number
+            ORDER BY weekday_number ASC;
+        `
+          )
+        ).unsafeFetchRaw();
+        console.log(sales)
+        const data = days.map(day => {
+          if (sales.find(sale => sale.name === day)) {
+            return {
+              name: day,
+              value: sales.find(sale => sale.name === day).value
+            }
+          } else {
+            return {
+              name: day,
+              value: 0
+            }
+          }
+        })
+        setDailySales(data)
+
+        // Top 4 most sold items
+        const topItems = await salesItemCollection.query(
+          Q.unsafeSqlQuery(
+            `
+            SELECT 
+              p.name, 
+              SUM(si.quantity) AS value
+            FROM sales_item si
+            JOIN products p ON si.product_id = p.id
+            GROUP BY p.name
+            ORDER BY value DESC
+            LIMIT 4;
+          `
+          )
+        ).unsafeFetchRaw();
+
+        console.log(topItems);
+        setTopItems(topItems);
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  }, [])
+
+
+
+  return (<View>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <DailySalesChart data={dailySales} />
+      <SoldItems data={topItems} />
+      <View style={{ width: 16 }} />
+    </ScrollView>
+  </View>)
+};
+
+const SalesSummary = () => {
+  /**
+   * 4 grid layout 
+   * 1. Total quantity in stock
+   * 2. Items in low stock
+   * 3. Total sales
+   * 4. Total profit
+   **/
+
+  const [totalStock, setTotalStock] = useState(0);
+  const [lowStock, setLowStock] = useState(0);
+  const [totalSales, setTotalSales] = useState(0);
+  const [totalProfit, setTotalProfit] = useState(0);
+
+
+  useEffect(() => {
+    database.write(async () => {
+      const items = await inventoryCollection.query().fetch();
+      const sales = await salesCollection.query().fetch();
+
+      setTotalStock(items.map(item => item.stock).reduce((a, b) => a + b, 0));
+      setLowStock(items.filter(item => item.stock < 5).length);
+      setTotalSales(sales.map(sale => sale.total).reduce((a, b) => a + b, 0));
+    })
+  }, []);
+
+  const Card = ({ title, value }) => (
+    <View bg='$background' p='$3' br='$3'>
+      <YStack>
+        <Paragraph>{value}</Paragraph>
+        <Paragraph>{title}</Paragraph>
+      </YStack>
+    </View>
+  )
+  return (
+    <View p='$3' gap='$3' flex={4} mx='auto'>
+      <Card title="Total Stock" value={totalStock + ' items'} />
+      <Card title="Low Stock" value={lowStock + ' items'} />
+      <Card title="Total Sales" value={'GHC ' + totalSales.toFixed(2)} />
+      <Card title="Total Profit" value={totalProfit} />
+    </View>
+  )
 }

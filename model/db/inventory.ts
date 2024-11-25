@@ -16,10 +16,7 @@ export default class Inventory extends Model {
     @readonly @date('created_at') createdAt
     @readonly @date('updated_at') updatedAt
 
-    @children('products') products;
-
     @relation('products', 'product_id') product;
     @relation('business', 'business_id') business;
-
 
 }

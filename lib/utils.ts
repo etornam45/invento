@@ -53,10 +53,24 @@ export function timeAgo(date: Date): string {
     }
 }
 
+export const timePassed = (date: Date): string => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date >= today) {
+        return 'Today';
+    } else if (date >= yesterday) {
+        return 'Yesterday';
+    } else {
+        return new Date(date).toDateString();
+    }
+}
 
 
-
-const groupSaleByDay = (items: Sale[]): Record<string, Sale[]> => {
+export const groupSaleByDay = (items: Sale[]): Record<string, Sale[]> => {
     return items.reduce((groups, item) => {
         const date = new Date(item.createdAt).toISOString().split("T")[0]; // Extract the date part
         if (!groups[date]) {
