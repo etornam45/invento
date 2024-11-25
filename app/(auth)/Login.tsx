@@ -7,21 +7,21 @@ import { router } from 'expo-router';
 
 export default function WelcomePage() {
 
-    // useEffect(() => {
-    //     supabase.auth.getSession().then(({ data: { session } }) => {
-    //         if (session) {
-    //             router.replace('/(tabs)')
-    //             return
-    //         }
-    //     })
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                router.replace('/(tabs)')
+                return
+            }
+        })
 
-    //     supabase.auth.onAuthStateChange((_event, session) => {
-    //         if (session) {
-    //             router.replace('/(tabs)') 
-    //             return
-    //         }
-    //     })
-    // })
+        supabase.auth.onAuthStateChange((_event, session) => {
+            if (session) {
+                router.replace('/(tabs)') 
+                return
+            }
+        })
+    })
 
     /**TODO
      * Remove the above code to prevent future bugs 
