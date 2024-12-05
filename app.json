@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "invento",
-    "slug": "invento",
+    "name": "echo",
+    "slug": "echo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/echo_icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/splash_screen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,10 +20,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/adaptive_icon.png",
+        "backgroundColor": "#FFF3CD"
       },
-      "package": "kik.cogni.so"
+      "package": "invento.echo.cx"
     },
     "web": {
       "bundler": "metro",

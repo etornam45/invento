@@ -7,7 +7,6 @@ import { Minus, Plus, X } from "@tamagui/lucide-icons";
 import database, { inventoryCollection, productsCollection } from "model";
 import Products from "model/db/products";
 import { Q } from "@nozbe/watermelondb";
-import inventory from ".";
 
 
 export default function NewInventory() {
@@ -39,6 +38,13 @@ export default function NewInventory() {
                         setName(product[0].name);
                         setDescription(product[0].description);
                     }
+                } else {
+                    setName('');
+                    setDescription('');
+                    setQuantity(0);
+                    setPrice(0);
+                    setProduct_id('');
+                    setInventory_id('');
                 }
             } catch (error) {
                 console.log(error);
@@ -53,7 +59,8 @@ export default function NewInventory() {
 
         await database.write(async () => {
             try {
-                if (inventory.length > 0) {
+                if (inventory_id.length > 0) {
+                    console.log('updating', inventory_id);
                     const _product = await productCollection.find(product_id);
                     await _product.update((product) => {
                         product.name = _name;
@@ -98,7 +105,7 @@ export default function NewInventory() {
                     console.log('product and inventory created');
                 }
             } catch (error) {
-                console.log(error);
+                console.log('Opps',error);
             }
 
             setName('');

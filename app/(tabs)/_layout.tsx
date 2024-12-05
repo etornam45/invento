@@ -7,6 +7,7 @@ import { SolarBoxMinimalisticBold } from 'icons/box'
 import { SolarMoneyBagBold } from 'icons/wallet'
 import { SolarQrCodeBold } from 'icons/code_scanner'
 import { SolarAddCircleBold } from 'icons/plus'
+import SolarUserCircleBoldDuotone from 'icons/SolarUserCircleBoldDuotone'
 
 
 export default function TabLayout() {
@@ -18,16 +19,21 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: theme.red10.val,
+        tabBarActiveTintColor: theme.yellow10Light.val,
         tabBarStyle: {
           backgroundColor: theme.background.val,
           borderTopColor: theme.borderColor.val,
+          padding: 5,
         },
         headerStyle: {
           backgroundColor: theme.background.val,
           borderBottomColor: theme.borderColor.val,
         },
         headerTintColor: theme.color.val,
+        tabBarLabelStyle: {
+          fontSize: 14,
+        },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tabs.Screen
@@ -53,10 +59,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="finance"
+        name="account"
         options={{
-          title: 'Finance',
-          tabBarIcon: ({ color }) => <SolarMoneyBagBold width={24} height={24} fill={color} />,
+          title: 'Account',
+          tabBarIcon: ({ color }) => <SolarUserCircleBoldDuotone width={24} height={24} fill={color} />,
         }}
       />
 
