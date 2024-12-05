@@ -1,8 +1,7 @@
 import BarCodeScanner from "components/BarCodeScanner";
 import { Button, Input, Sheet, Text, TextArea, View, XStack, YStack } from "tamagui";
 // import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { useCallback, useMemo, useRef, useState } from "react";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useState } from "react";
 import { Minus, Plus, X } from "@tamagui/lucide-icons";
 import database, { inventoryCollection, productsCollection } from "model";
 import Products from "model/db/products";
@@ -17,8 +16,8 @@ export default function NewInventory() {
 
     const [_name, setName] = useState('');
     const [_description, setDescription] = useState('');
-    const [_quantity, setQuantity] = useState(0);
-    const [_price, setPrice] = useState(0);
+    const [_quantity, setQuantity] = useState('');
+    const [_price, setPrice] = useState('');
 
     async function handleCodeScanned(code: string) {
         console.log(code);
@@ -41,8 +40,8 @@ export default function NewInventory() {
                 } else {
                     setName('');
                     setDescription('');
-                    setQuantity(0);
-                    setPrice(0);
+                    setQuantity('');
+                    setPrice('');
                     setProduct_id('');
                     setInventory_id('');
                 }
@@ -105,15 +104,23 @@ export default function NewInventory() {
                     console.log('product and inventory created');
                 }
             } catch (error) {
-                console.log('Opps',error);
+                console.log('Opps', error);
             }
 
             setName('');
             setDescription('');
-            setQuantity(0);
-            setPrice(0);
+            setQuantity('');
+            setPrice('');
             setScannedCode('');
         });
+    }
+
+    function scanAgain(): void {
+        setScannedCode('');
+        setName('');
+        setDescription('');
+        setQuantity('');
+        setPrice('');
     }
 
     return (<View>
@@ -123,66 +130,74 @@ export default function NewInventory() {
         />
         <View padding="$4" space="$4">
             <Text fontWeight="bold" fontSize="$6">Scanned Product</Text>
-            <Text>Barcode: {scannedCode}</Text>
+            
             <View >
-                {scannedCode.length > 0 ? (
-                    <YStack space>
-                        <XStack space="$4">
-                            <Input
-                                placeholder="Product Name"
-                                flex={1}
-                                value={_name}
-                                onChangeText={setName}
-                            />
-                        </XStack>
-                        <XStack space="$4">
-                            <TextArea
-                                placeholder="Product Description"
-                                flex={1}
-                                value={_description}
-                                onChangeText={setDescription}
-                            />
-                        </XStack>
-                        <XStack space="$4">
-                            <Input
-                                placeholder="Product Quantity"
-                                flex={1}
-                                keyboardType="numeric"
-                                value={_quantity.toString()}
-                                onChangeText={(text) => setQuantity(parseInt(text))}
-                            />
-                            <Button
-                                px="$3"
-                                py="$2"
-                                onPress={() => setQuantity(_quantity - 1)}
-                            >
-                                <Minus />
-                            </Button>
-                            <Button
-                                px="$3"
-                                py="$2"
-                                onPress={() => setQuantity(_quantity + 1)}
-                            >
-                                <Plus />
-                            </Button>
-                        </XStack>
-                        <XStack space="$4">
-                            <Input
-                                placeholder="Product Price"
-                                flex={1}
-                                keyboardType="numeric"
-                                value={_price.toString()}
-                                onChangeText={(text) => setPrice(parseFloat(text))}
-                            />
-                        </XStack>
-                    </YStack>
-                ) : <></>}
+
+                <YStack space>
+                    <XStack space="$4">
+                        <Input 
+                            placeholder="Product Barcode"
+                            flex={1}
+                            value={scannedCode}
+                            editable={false}
+                            onChangeText={setScannedCode}
+                        />
+                    </XStack>
+                    <XStack space="$4">
+                        <Input
+                            placeholder="Product Name"
+                            flex={1}
+                            value={_name}
+                            onChangeText={setName}
+                        />
+                    </XStack>
+                    <XStack space="$4">
+                        <TextArea
+                            placeholder="Product Description"
+                            flex={1}
+                            value={_description}
+                            onChangeText={setDescription}
+                        />
+                    </XStack>
+                    <XStack space="$4">
+                        <Input
+                            placeholder="Product Quantity"
+                            flex={1}
+                            keyboardType="numeric"
+                            value={_quantity.toString()}
+                            onChangeText={(text) => setQuantity(text)}
+                        />
+                        <Button
+                            px="$3"
+                            py="$2"
+                            onPress={() => setQuantity(`${+_quantity - 1}`)}
+                        >
+                            <Minus />
+                        </Button>
+                        <Button
+                            px="$3"
+                            py="$2"
+                            onPress={() => setQuantity(`${+_quantity + 1}`)}
+                        >
+                            <Plus />
+                        </Button>
+                    </XStack>
+                    <XStack space="$4">
+                        <Input
+                            placeholder="Product Price"
+                            flex={1}
+                            keyboardType="numeric"
+                            value={_price.toString()}
+                            onChangeText={(text) => setPrice((text))}
+                        />
+                    </XStack>
+                </YStack>
             </View>
             <XStack space="$4">
                 <Button
                     flex={1}
                     theme="alt1"
-                    onPress={() => { setScannedCode('') }}
+                    onPress={scanAgain}
                 >
                     Scan Again
                 </Button>
