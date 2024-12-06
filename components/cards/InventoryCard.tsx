@@ -16,13 +16,13 @@ const InventoryCard = ({ inventory, product }: { inventory: Inventory ,product: 
                 flex: 1,
                 margin: 5,
                 maxWidth: '48%',
-                aspectRatio: .8,
+                // aspectRatio: .8,
             }}
             space
 
             onPress={() => router.push(`/inventory/${inventory.id}`)}
         >
-            <View
+            {/* <View
                 style={{
                     flex: 1,
                     alignItems: 'center',
@@ -35,7 +35,7 @@ const InventoryCard = ({ inventory, product }: { inventory: Inventory ,product: 
                         height: 100
                     }}
                     src={require('../../assets/images/Crunchy-cookies.png')} />
-            </View>
+            </View> */}
             <View space='$1'>
                 <Text
                     style={{
