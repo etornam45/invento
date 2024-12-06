@@ -24,7 +24,7 @@ export default function NewInventory() {
         await database.write(async () => {
             try {
                 const product = await productsCollection.query(Q.where('barcode', code)).fetch();
-                if (product) {
+                if (product.length > 0) {
                     const inventory = await inventoryCollection.query(Q.where('product_id', product[0]?.id)).fetch();
                     if (inventory) {
                         setName(product[0].name);
