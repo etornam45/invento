@@ -39,17 +39,17 @@ export function timeAgo(date: Date): string {
     if (seconds < 60) {
         return 'Just now';
     } else if (minutes < 60) {
-        return `${Math.floor(minutes)} minutes ago`;
+        return `${Math.floor(minutes)} min ago`;
     } else if (hours < 24) {
-        return `${Math.floor(hours)} hours ago`;
+        return `${Math.floor(hours)} hrs ago`;
     } else if (days < 7) {
         return `${Math.floor(days)} days ago`;
     } else if (weeks < 4) {
-        return `${Math.floor(weeks)} weeks ago`;
+        return `${Math.floor(weeks)} wks ago`;
     } else if (months < 12) {
         return `${Math.floor(months)} months ago`;
     } else {
-        return `${Math.floor(years)} years ago`;
+        return `${Math.floor(years)} yrs ago`;
     }
 }
 

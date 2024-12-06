@@ -11,7 +11,7 @@ const DailySalesChart = ({ data, tooltip }: DailySalesChartProps) => {
     const maxValue = Math.max(...data.map((item) => item.value));
 
     return (
-        <View p='$3.5'
+        <View p='$3.5' px='$4' 
         // mr='$3.5'
         w={'auto'}
         h={'auto'}
@@ -39,7 +39,7 @@ const DailySalesChart = ({ data, tooltip }: DailySalesChartProps) => {
                         <View
                             backgroundColor="$blue10"
                             // width={`${(item.value / maxValue) * 100}%`}
-                            w='30'
+                            w='35'
                             height={(item.value / maxValue) * 90}
                             borderRadius={4}
                         />
