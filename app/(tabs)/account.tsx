@@ -1,18 +1,45 @@
-import database, { inventoryCollection, productsCollection } from 'model'
+import { User } from '@supabase/supabase-js'
+import { supabase } from 'lib/supabase'
+import database, { inventoryCollection, productsCollection, salesCollection } from 'model'
+import { useEffect, useState } from 'react'
 import { Button, Image, Paragraph, ScrollView, Text, View, XStack, YStack } from 'tamagui'
 
 export default function FinancePage() {
+  const [user, setUser] = useState<User>()
+  const [totalSales, setTotalSales] = useState<number>(0);
+  const [lastReceived, setLastReceived] = useState<Date>(); // date
+  const [totalInventory, setTotalInventory] = useState<number>(0);
+  const [lowInventory, setLowInventory] = useState<number>(0);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user)
+    }).catch(err => {
+      console.log(err)
+    })
+
+
+    database.write(async () => {
+      const items = await inventoryCollection.query().fetch();
+      const sales = await salesCollection.query().fetch();
+
+      setTotalSales(sales.map(sale => sale.total).reduce((a, b) => a + b, 0));
+      setLastReceived(sales.map(sale => sale.createdAt).sort((a, b) => a.getTime() - b.getTime())[0]);
+      setTotalInventory(items.map(item => item.stock).reduce((a, b) => a + b, 0));
+      setLowInventory(items.filter(item => item.stock < 10).length);
+    })
+  }, [])
 
   return (
     <ScrollView>
       <YStack p='$4' space>
         <XStack space>
           <View>
-            <Image source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} style={{ width: 50, height: 50, borderRadius: 60 }} />
+            <Image source={{ uri: `https://api.dicebear.com/9.x/thumbs/png?seed=${user?.user_metadata.full_name}` }} style={{ width: 50, height: 50, borderRadius: 60 }} />
           </View>
           <YStack jc='space-between'>
-            <Text fontSize={18}>Akwaba, Benjamin</Text>
-            <Text>Kumasi, Ghana</Text>
+            <Text fontSize={18}>Akwaba, {user?.user_metadata.full_name}</Text>
+            <Text>{user?.email}</Text>
           </YStack>
         </XStack>
         <View bg='#2D91FF' h={180} br={15} p={15} jc={'space-between'}>
@@ -21,11 +48,11 @@ export default function FinancePage() {
               <Text color='#fff' fontSize={18}>Income</Text>
               <Text color='#fff' fontSize={28} fontWeight={'bold'} style={{
                 fontFamily: 'Inter-Black'
-              }}>GHC 2000.00</Text>
+              }}>GHC {totalSales.toFixed(2)}</Text>
             </YStack>
             <YStack ai='flex-end'>
               <Text color='#fff' fontSize={18}>Last received</Text>
-              <Text color='#fff' fontSize={18}>23/45</Text>
+              <Text color='#fff' fontSize={18}>{lastReceived?.toLocaleDateString()}</Text>
             </YStack>
           </XStack>
           <View>
@@ -35,19 +62,28 @@ export default function FinancePage() {
           </View>
         </View>
         <XStack space='$3'>
-          <YStack space='$3' flex={1}>
-            <View bg='#37474F' flex={1} br={15} p={15} jc={'space-between'}>
-              <Text color='#fff' fontSize={18}>Import</Text>
-            </View>
-            <View bg='#37474F' flex={1} br={15} p={15} jc={'space-between'}>
-              <Text color='#fff' fontSize={18}>Import</Text>
-            </View>
-          </YStack>
           <View bg='#37474F' flex={1} br={15} p={15} jc={'space-between'}>
-            <Text color='#fff' fontSize={18}>Income</Text>
+            <Text color='#fff' fontSize={18}>
+              Low Inventory
+            </Text>
             <Text color='#fff' fontSize={28} fontWeight={'bold'} style={{
               fontFamily: 'Inter-Black'
-            }}>GHC 2000.00</Text>
+            }}>
+              {lowInventory} units
+            </Text>
+            <Text color='#fff' fontSize={16}>
+              units on low stock
+            </Text>
+          </View>
+          <View bg='#37474F' flex={1} br={15} p={15} jc={'space-between'}>
+            <Text color='#fff' fontSize={18}>
+              Total Inventory
+            </Text>
+            <Text color='#fff' fontSize={28} fontWeight={'bold'} style={{
+              fontFamily: 'Inter-Black'
+            }}>
+              {totalInventory} units
+            </Text>
           </View>
         </XStack>
         <YStack space='$3'>
