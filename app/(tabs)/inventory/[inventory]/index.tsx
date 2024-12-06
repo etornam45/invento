@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { ScrollView, FlatList } from 'react-native';
+import { ScrollView, FlatList, RefreshControl } from 'react-native';
 import SearchBar from 'components/cards/searchBar';
 import database, { inventoryCollection, productsCollection, salesItemCollection } from 'model';
 import Products from 'model/db/products';
@@ -13,6 +13,7 @@ import { Q } from '@nozbe/watermelondb';
 import SalesItemCard from 'components/cards/SalesItemCard';
 import StripSeparator from 'components/strip_separators';
 import { timeAgo } from 'lib/utils';
+import { refreshStore } from 'lib/stores/refresh';
 
 
 const InventoryDetailPage = () => {
@@ -21,6 +22,8 @@ const InventoryDetailPage = () => {
     const [inventory, setInventory] = useState<Inventory>();
     const [product, setProduct] = useState<Products>();
     const [saleItems, setSaleItems] = useState<SalesItem[]>();
+
+    const { refresh, pullMe } = refreshStore();
 
     useEffect(() => {
         async function fetchData() {
@@ -33,16 +36,23 @@ const InventoryDetailPage = () => {
                 setSaleItems(saleItems);
             })
         }
-
+        console.log(product?.barcode);
         fetchData();
-    }, [])
+    }, [refresh])
 
     return (
-        <ScrollView style={{
+        <ScrollView
+            refreshControl={
+                <RefreshControl
+                    refreshing={refresh}
+                    onRefresh={pullMe}
+                />
+            }
+        style={{
         }}>
             <View p='$4'>
                 <View p='$4' borderRadius={12} bg='$background'>
-                    <XStack flex={1} jc='space-between' px='$8' >
+                    {/* <XStack flex={1} jc='space-between' px='$8' >
                         <Image
                             style={{
                                 aspectRatio: 1,
@@ -50,7 +60,7 @@ const InventoryDetailPage = () => {
                             }}
                             src={require('assets/images/Crunchy-cookies.png')}
                         />
-                    </XStack>
+                    </XStack> */}
                     <XStack jc='space-between' bg='$accentBackground' p='$3' br='$4'>
                         <YStack>
                             <Text fontSize={20}>

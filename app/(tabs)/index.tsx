@@ -1,6 +1,6 @@
 import { Paragraph, ScrollView, View, XStack, YStack } from 'tamagui';
 import SalesCard from 'components/cards/SalesCard';
-import { FlatList, Pressable } from 'react-native';
+import { FlatList, Pressable, RefreshControl } from 'react-native';
 import { useEffect, useState } from 'react';
 import DailySalesChart from 'components/cards/dailysales';
 import SoldItems from 'components/cards/soldItems';
@@ -14,8 +14,11 @@ import { SolarChatRoundMoneyBold } from 'icons/sales';
 import SolarClipboardTextBoldDuotone from 'icons/SolarClipboardTextBoldDuotone';
 import SolarMagniferLinear from 'icons/SolarMagniferLinear';
 import { Q } from '@nozbe/watermelondb';
+import { refreshStore } from 'lib/stores/refresh';
 
 export default function Home() {
+
+  const { refresh, pullMe} = refreshStore();
 
   useEffect(() => {
     // router.navigate('/(auth)/Login');
@@ -47,7 +50,14 @@ export default function Home() {
 
 
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl
+          refreshing={refresh}
+          onRefresh={pullMe}
+          />
+      }
+    >
       <DailySales />
       <QuickActions />
       <SalesSummary />
@@ -59,13 +69,13 @@ export default function Home() {
 const QuickActions = () => {
 
   return (<XStack jc='space-between' p='$3.5'>
-    <Pressable onPress={() => router.navigate('/(tabs)/inventory/')}>
+    <Pressable onPress={() => router.navigate('/(quick)/new_inventory')}>
       <YStack bg='$background' p='$3' br='$3'>
         <SolarBoxBoldDuotone width={24} height={24} fill={'#2dadda'} />
         <Paragraph>New Product</Paragraph>
       </YStack>
     </Pressable>
-    <Pressable onPress={() => router.navigate('/(tabs)/sales/')}>
+    <Pressable onPress={() => router.navigate('/(quick)/SalesScanner')}>
       <YStack bg='$background' p='$3' br='$3'>
         <SolarClipboardTextBoldDuotone width={24} height={24} fill={'#2dadda'} />
         <Paragraph>New Purchase</Paragraph>
@@ -82,6 +92,8 @@ const QuickActions = () => {
 
 
 const DailySales = () => {
+
+  const { refresh } = refreshStore();
 
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const [dailySales, setDailySales] = useState<{
@@ -162,7 +174,7 @@ const DailySales = () => {
         console.log(error)
       }
     })
-  }, [])
+  }, [refresh])
 
 
 
@@ -176,13 +188,7 @@ const DailySales = () => {
 };
 
 const SalesSummary = () => {
-  /**
-   * 4 grid layout 
-   * 1. Total quantity in stock
-   * 2. Items in low stock
-   * 3. Total sales
-   * 4. Total profit
-   **/
+  const { refresh } = refreshStore();
 
   const [totalStock, setTotalStock] = useState(0);
   const [lowStock, setLowStock] = useState(0);
@@ -196,10 +202,10 @@ const SalesSummary = () => {
       const sales = await salesCollection.query().fetch();
 
       setTotalStock(items.map(item => item.stock).reduce((a, b) => a + b, 0));
-      setLowStock(items.filter(item => item.stock < 5).length);
+      setLowStock(items.filter(item => item.stock < 10).length);
       setTotalSales(sales.map(sale => sale.total).reduce((a, b) => a + b, 0));
     })
-  }, []);
+  }, [refresh]);
 
   const Card = ({ title, value }) => (
     <View bg='$background' p='$3' br='$3'>
