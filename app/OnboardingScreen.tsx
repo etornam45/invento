@@ -68,7 +68,7 @@ export default function OnboardingScreen() {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: 'orange',
+      backgroundColor: 'blue',
     }} >
       <LinearGradient
         colors={['#00d4ff', '#0f5d9d', '#00ff87']}
