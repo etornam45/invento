@@ -11,7 +11,7 @@ export default function Layout() {
             options={{
                 title: 'Sales',
                 headerRight: () => (
-                    <Link href="/sales/SalesScanner" asChild>
+                    <Link href="/(quick)/SalesScanner" asChild>
                         <Pressable>
                             {({ pressed }) => (
                                 <SolarQrCodeBold width={24} height={24} fill='grey' />

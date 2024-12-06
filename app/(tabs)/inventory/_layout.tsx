@@ -9,7 +9,7 @@ export default function Layout() {
             options={{
                 title: 'Inventory',
                 headerRight: () => (
-                    <Link href="/inventory/new_inventory" asChild>
+                    <Link href="/(quick)/new_inventory" asChild>
                         <Pressable>
                             {({ pressed }) => (
                                 <SolarAddCircleBold width={24} height={24} fill='gray' />
@@ -25,12 +25,6 @@ export default function Layout() {
                 title: 'Inventory Details',
                 headerShown: false,
                 presentation: 'modal',
-            }}
-        />
-        <Stack.Screen
-            name="new_inventory"
-            options={{
-                title: 'New Inventory',
             }}
         />
     </Stack>;

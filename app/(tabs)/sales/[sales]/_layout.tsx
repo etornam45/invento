@@ -10,15 +10,6 @@ export default function Layout() {
             name="index"
             options={{
                 title: 'Sales Details',
-                headerRight: () => (
-                    <Link href={`/sales/${local.sales}/edit`} asChild>
-                        <Pressable>
-                            {({ pressed }) => (
-                                <SolarPenBoldDuotone width={24} height={24} fill='grey' />
-                            )}
-                        </Pressable>
-                    </Link>
-                ),
             }}
         />
         <Stack.Screen

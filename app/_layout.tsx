@@ -76,6 +76,14 @@ function RootLayoutNav() {
         />
 
         <Stack.Screen
+          name="(quick)"
+          options={{
+            title: 'Quick',
+            headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
           name='(auth)/Login'
           options={{
             headerShown: false,
