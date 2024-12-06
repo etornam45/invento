@@ -14,10 +14,10 @@ import { Button, Input, ScrollView, Separator, Sheet, Text, View, XStack, YStack
 export default function SalesScanPage() {
     const { items, add, clear } = scannedItemsStore();
     const [open, setOpen] = useState(false)
-    const [openScanner, setOpenScanner] = useState(false)
     const [position, setPosition] = useState(0)
     const snapPoints = [90]
     const [loading, setLoading] = useState(false)
+    const [paymentMethod, setPaymentMethod] = useState('cash')
 
     function handleCodeScanned(code: string) {
         database.write(async () => {
@@ -39,7 +39,7 @@ export default function SalesScanPage() {
                 const _sales = await salesCollection.create((sale) => {
                     sale.total = Array.from(items).reduce((acc, item) => acc + item.price * item.quantity, 0) as number
                     sale.quantity = Array.from(items).reduce((acc, item) => acc + item.quantity, 0) as number
-                    sale.payment = 'cash'
+                    sale.payment = paymentMethod
                 })
                 console.log(_sales)
 
@@ -74,8 +74,8 @@ export default function SalesScanPage() {
 
 
     return (
-        <View w='100%' flex={1}>
-            <BarCodeScanner shifts={{x: 55, y: 250}} aspectRatio={5 / 2} _onCodeScanned={handleCodeScanned} />
+        <ScrollView w='100%' flex={1}>
+            <BarCodeScanner shifts={{ x: 55, y: 250 }} aspectRatio={5 / 2} _onCodeScanned={handleCodeScanned} />
             <View>
                 <XStack w='100%' jc='space-between'>
                     <Text fontSize={20} ml='$3.5' fontWeight='600'>Scanned Items</Text>
@@ -84,8 +84,8 @@ export default function SalesScanPage() {
                     </View>
                 </XStack>
             </View>
-            <YStack flex={1} jc='space-between'>
-                <ScrollView p='$2.5' m='$3.5' borderRadius={12} backgroundColor='$background'>
+            <YStack jc='space-between' p='$3.5' space>
+                <View minHeight={300}  borderRadius={12} backgroundColor='$background' p='$2.5'>
                     {items.size === 0 && (
                         <View>
                             <Text fontSize={20} fontWeight='500' mb='$2.5' textAlign='center'>Scan an item to add to cart</Text>
@@ -98,13 +98,31 @@ export default function SalesScanPage() {
                             {index < items.size - 1 && <StripSeparator />}
                         </Fragment>
                     ))}
-                </ScrollView>
-                <View m='$3.5'>
-                    <Button disabled={loading} onPress={checkOut} w='100%' h='50' bg={!loading? '$blue10': 'grey'} color='$white' fontSize={20} fontWeight='600'>
+                </View>
+                <View w='100%' p='$3.5' borderRadius={12} backgroundColor='$background' gap='$2'>
+                    <Text fontSize={18} fontWeight='600'>Summary</Text>
+                    <PaymentMethodsSelect value={paymentMethod} onChange={setPaymentMethod} />
+                    <Separator />
+                    <XStack jc='space-between' mt='$2'>
+                        <Text>Total Items</Text>
+                        <Text>{items.size}</Text>
+                    </XStack>
+                    <XStack jc='space-between' mt='$2'>
+                        <Text>Total Quantity</Text>
+                        <Text>{Array.from(items).reduce((acc, item) => acc + item.quantity, 0)}</Text>
+                    </XStack>
+                    <XStack jc='space-between' mt='$2'>
+                        <Text>Total Price</Text>
+                        <Text>GHC {Array.from(items).reduce((acc, item) => acc + item.price * item.quantity, 0)}</Text>
+                    </XStack>
+                </View>
+                <View>
+                    <Button disabled={loading} onPress={checkOut} w='100%' h='50' bg={!loading ? '$blue10' : 'grey'} color='$white' fontSize={20} fontWeight='600'>
                         {loading ? 'Processing...' : 'Check Out'}
                     </Button>
                 </View>
             </YStack>
+
             <Sheet
                 forceRemoveScrollEnabled={open}
                 open={open}
@@ -128,7 +146,46 @@ export default function SalesScanPage() {
                     <SearchList />
                 </Sheet.Frame>
             </Sheet>
-        </View>
+        </ScrollView>
     );
 }
 
+
+interface PaymentMethodsSelectProps {
+    value: string;
+    onChange: (value: string) => void;
+}
+const PaymentMethodsSelect = ({ value, onChange }: PaymentMethodsSelectProps) => {
+    // use horizontal buttons for payment methods selection (cash, card, mobile money) 
+    return (
+        <XStack gap="$2" >
+            <Button
+                bg={value === 'cash' ? '$blue10' : '$background'}
+                onPress={() => onChange('cash')}
+                borderRadius={10}
+                flex={1}
+                style={{ elevation: 0 }}
+            >
+                <Text color={value === 'cash' ? '$white' : '$black'}>Cash</Text>
+            </Button>
+            <Button
+                bg={value === 'card' ? '$blue10' : '$background'}
+                onPress={() => onChange('card')}
+                borderRadius={10}
+                flex={1}
+                style={{ elevation: 0 }}
+            >
+                <Text color={value === 'card' ? '$white' : '$black'}>Card</Text>
+            </Button>
+            <Button
+                bg={value === 'mobile_money' ? '$blue10' : '$background'}
+                onPress={() => onChange('mobile_money')}
+                borderRadius={10}
+                flex={1}
+                style={{ elevation: 0 }}
+            >
+                <Text color={value === 'mobile_money' ? '$white' : '$black'}>Mobile Money</Text>
+            </Button>
+        </XStack>
+    );
+}
