@@ -52,6 +52,10 @@ export default function SalesDetails() {
             >
                 <View py='$2' px='$3.5' space='$2'>
                     <XStack jc='space-between'>
+                        <Text fontSize={16}>Date</Text>
+                        <Text fontSize={16}>{saleData?.createdAt!.toLocaleDateString()}</Text>
+                    </XStack>
+                    <XStack jc='space-between'>
                         <Text fontSize={16}>Quantity Sold</Text>
                         <Text fontSize={16}>{saleData?.quantity} units</Text>
                     </XStack>
