@@ -101,6 +101,7 @@ function RootLayoutNav() {
           name='(auth)/Business'
           options={{
             // headerShown: false,
+            title: 'Business',
           }}
         />
 

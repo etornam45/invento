@@ -17,7 +17,7 @@ const slides: Slide[] = [
   {
     title: 'Manage your sales the easily way',
     description: 'Easily understand your sale and revenue in a visual way',
-    image: require('../assets/images/Ice cream seller.gif'),
+    image: require('../assets/images/Ice cream seller-amico.png'),
   },
   {
     title: 'Keep track of inventory',
@@ -68,9 +68,9 @@ export default function OnboardingScreen() {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: 'blue',
+      backgroundColor: 'white',
     }} >
-      <LinearGradient
+      {/* <LinearGradient
         colors={['#00d4ff', '#0f5d9d', '#00ff87']}
         style={{
           position: 'absolute',
@@ -79,7 +79,7 @@ export default function OnboardingScreen() {
           top: 0,
           bottom: 0,
         }}
-      ></LinearGradient>
+      ></LinearGradient> */}
       <YStack
         flex={1}
         alignItems="center"
@@ -124,19 +124,7 @@ export default function OnboardingScreen() {
         </View>
 
 
-        <XStack width="100%" justifyContent="space-between" padding="$2">
-          <Button br={25} onPress={handlePrevious}
-            opacity={currentIndex === 0 ? 0 : 1}
-            variant="outlined"
-            borderColor='$white1'
-          >
-            Previous
-          </Button>
-          <Button br={25} bg='$blue10' onPress={handleNext}>
-            {/* {currentIndex === slides.length - 1 ? 'Get Started' : 'Next'} */}
-            <ArrowRight />
-          </Button>
-        </XStack>
+
         <XStack space justifyContent="center" alignItems="center" padding="$0">
           {slides.map((_, index) => (
             <Stack
@@ -144,13 +132,26 @@ export default function OnboardingScreen() {
               width={index === currentIndex ? 50 : 10}
               height={10}
               borderRadius="$full"
-              backgroundColor={index === currentIndex ? '$blue10' : '$white1'}
+              backgroundColor={index === currentIndex ? '$blue10' : '$blue10'}
               br={5}
             />
           ))}
         </XStack>
-      </YStack>
 
+      </YStack>
+        <XStack width="100%" justifyContent="space-between" padding="$3.5">
+          {/* <Button br={25} onPress={handlePrevious}
+            opacity={currentIndex === 0 ? 0 : 1}
+            variant="outlined"
+            borderColor='$white1'
+          >
+            Previous
+          </Button> */}
+          <Button w={'100%'} bg='$blue10' onPress={handleNext} color={'white'}>
+            {currentIndex === slides.length - 1 ? 'Get Started' : 'Next'}
+            <ArrowRight color={'white'} />
+          </Button>
+        </XStack>
     </View>
   );
 };

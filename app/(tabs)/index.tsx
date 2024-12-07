@@ -8,7 +8,7 @@ import InventoryCard from 'components/cards/InventoryCard';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from 'lib/supabase';
 import { router } from 'expo-router';
-import database, { inventoryCollection, salesCollection, salesItemCollection } from 'model';
+import database, { businessCollection, inventoryCollection, salesCollection, salesItemCollection } from 'model';
 import SolarBoxBoldDuotone from 'icons/SolarBoxBoldDuotone';
 import { SolarChatRoundMoneyBold } from 'icons/sales';
 import SolarClipboardTextBoldDuotone from 'icons/SolarClipboardTextBoldDuotone';
@@ -18,7 +18,7 @@ import { refreshStore } from 'lib/stores/refresh';
 
 export default function Home() {
 
-  const { refresh, pullMe} = refreshStore();
+  const { refresh, pullMe } = refreshStore();
 
   useEffect(() => {
     // router.navigate('/(auth)/Login');
@@ -30,12 +30,7 @@ export default function Home() {
 
       UserLoggedIn(session);
     })
-
-    database.write(async () => {
-      // const items = await salesItemCollection.query().fetch()
-      // console.log(items)   
-    })
-  }, [])
+  }, [refresh])
 
 
   function UserLoggedIn(session: Session | null) {
@@ -43,6 +38,18 @@ export default function Home() {
       console.log('User not logged in');
       router.navigate('/(auth)/Login');
       return;
+    } else {
+      database.write(async () => {
+        try {
+          const business = await businessCollection.query(Q.where('user_id', session?.user?.id)).fetch();
+          console.log(business[0].name)
+          if (business.length === 0) {
+            router.navigate('/(auth)/Business');
+          }
+        } catch (error) {
+          console.log(error) // Error fetching business
+        }
+      }) 
     }
   }
 
@@ -55,7 +62,7 @@ export default function Home() {
         <RefreshControl
           refreshing={refresh}
           onRefresh={pullMe}
-          />
+        />
       }
     >
       <DailySales />
@@ -104,7 +111,7 @@ const DailySales = () => {
   const [topItems, setTopItems] = useState<{
     name: string,
     value: number
-  } []>([]);
+  }[]>([]);
   /**
    * Mon - 100 -> (sale_1 = 10) + (sale_2 = 90)
    */

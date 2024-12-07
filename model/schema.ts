@@ -24,6 +24,7 @@ export default appSchema({
         { name: 'deleted', type: 'boolean' },
         { name: 'created_at', type: 'number' },
         { name: 'updated_at', type: 'number' },
+        { name: 'user_id', type: 'string' },
       ]
     }),
     tableSchema({
