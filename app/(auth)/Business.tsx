@@ -1,13 +1,16 @@
 import { YStack, XStack, Text, Input, Button } from 'tamagui';
 import { useFonts } from 'expo-font';
-import { Home, MapPin } from '@tamagui/lucide-icons';
+import { Home, MapPin, Phone } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { supabase } from 'lib/supabase';
+import database, { businessCollection } from 'model';
 
 export default function CustomizeStore() {
     const router = useRouter();
     const [business_name, setBusinessName] = useState('');
     const [country, setCountry] = useState('');
+    const [phone, setPhone] = useState('');
     const [fontsLoaded] = useFonts({
         Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     });
@@ -16,8 +19,29 @@ export default function CustomizeStore() {
         return null;
     }
 
-    function handleContinue() {
-        router.navigate('/(auth)/Login');
+    async function handleContinue() {
+        const { data: { session } } = await supabase.auth.getSession()
+
+        if (!session) {
+            alert('Please login to continue')
+            router.navigate('/(auth)/Login')
+        }
+
+        database.write(async () => {
+            try {
+                const business = await businessCollection.create((data) => {
+                    data.name = business_name;
+                    data.city = country;
+                    data.userId = session?.user?.id;
+                    data.phone = phone;
+                });
+    
+                console.log(business)
+                router.navigate('/(tabs)')
+            } catch (error) {
+                console.log(error)
+            }
+        })
     }
 
     return (
@@ -48,12 +72,24 @@ export default function CustomizeStore() {
                 <MapPin color="$gray11" size={20} />
                 <Input
                     flex={1}
-                    placeholder="Country"
+                    placeholder="City"
                     backgroundColor="transparent"
                     borderWidth={0}
                     paddingLeft="$2"
                     value={country}
                     onChangeText={setCountry}
+                />
+            </XStack>
+            <XStack alignItems="center" backgroundColor="$gray3" borderRadius="$4" padding="$1.5" px='$3'>
+                <Phone color="$gray11" size={20} />
+                <Input
+                    flex={1}
+                    placeholder="Phone Number"
+                    backgroundColor="transparent"
+                    borderWidth={0}
+                    paddingLeft="$2"
+                    value={phone}
+                    onChangeText={setPhone}
                 />
             </XStack>
 
@@ -62,7 +98,7 @@ export default function CustomizeStore() {
                 color="white"
                 borderRadius="$4"
                 height={50}
-                marginTop="auto"
+                // marginTop="auto"
                 onPress={handleContinue}
             >
                 Continue

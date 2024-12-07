@@ -133,7 +133,7 @@ export default function AccountCreation() {
           Continue
         </Button>
 
-        <YStack alignItems="center" marginTop="$4">
+        {/* <YStack alignItems="center" marginTop="$4">
           <Text color="$gray11">OR</Text>
         </YStack>
 
@@ -150,9 +150,9 @@ export default function AccountCreation() {
             <Text fontSize={24} color="red">G</Text>
             <Text>Continue with Google</Text>
           </XStack>
-        </Button>
+        </Button> */}
 
-        <XStack space="$2" marginTop="auto">
+        <XStack space="$2" mx="auto">
           <Text color="$gray11">Already have an account?</Text>
           <Pressable onPress={() => router.navigate('/(auth)/Login')}>
             <Text color="$blue10">Login</Text>

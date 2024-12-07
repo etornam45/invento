@@ -115,7 +115,7 @@ export default function WelcomePage() {
                 Continue
             </Button>
 
-            <YStack alignItems="center" marginTop="$4">
+            {/* <YStack alignItems="center" marginTop="$4">
                 <Text color="$gray11">OR</Text>
             </YStack>
 
@@ -130,7 +130,7 @@ export default function WelcomePage() {
                 icon={<Text fontSize={20}>G</Text>}
             >
                 <Text marginLeft="$2">Continue with Google</Text>
-            </Button>
+            </Button> */}
             <Text color="$gray11" textAlign="center" marginTop="$4">
                 Don't have an account?{' '}
                 <Anchor onPress={() => router.push('/(auth)/Register')} color="$blue10" marginTop="$4">
