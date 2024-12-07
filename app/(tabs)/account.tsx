@@ -1,15 +1,25 @@
+import { Q } from '@nozbe/watermelondb'
 import { User } from '@supabase/supabase-js'
+import { DoorOpen } from '@tamagui/lucide-icons'
+import { refreshStore } from 'lib/stores/refresh'
 import { supabase } from 'lib/supabase'
-import database, { inventoryCollection, productsCollection, salesCollection } from 'model'
+import database, { businessCollection, inventoryCollection, productsCollection, salesCollection } from 'model'
+import Business from 'model/db/business'
 import { useEffect, useState } from 'react'
+import { RefreshControl } from 'react-native'
 import { Button, Image, Paragraph, ScrollView, Text, View, XStack, YStack } from 'tamagui'
 
 export default function FinancePage() {
+
+  const { refresh, pullMe } = refreshStore();
+
+
   const [user, setUser] = useState<User>()
   const [totalSales, setTotalSales] = useState<number>(0);
   const [lastReceived, setLastReceived] = useState<Date>(); // date
   const [totalInventory, setTotalInventory] = useState<number>(0);
   const [lowInventory, setLowInventory] = useState<number>(0);
+  const [business, setBusiness] = useState<Business>();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -22,16 +32,37 @@ export default function FinancePage() {
     database.write(async () => {
       const items = await inventoryCollection.query().fetch();
       const sales = await salesCollection.query().fetch();
+      const business = user ? await businessCollection.query(Q.where('user_id', user.id)).fetch() : [];
+
+      if (business.length > 0) {
+        setBusiness(business[0]);
+      }
 
       setTotalSales(sales.map(sale => sale.total).reduce((a, b) => a + b, 0));
       setLastReceived(sales.map(sale => sale.createdAt).sort((a, b) => a.getTime() - b.getTime())[0]);
       setTotalInventory(items.map(item => item.stock).reduce((a, b) => a + b, 0));
       setLowInventory(items.filter(item => item.stock < 10).length);
     })
-  }, [])
+  }, [refresh])
+
+
+  function logout() {
+    supabase.auth.signOut().then(() => {
+      console.log('logout')
+    }).catch(err => {
+      console.log(err)
+    })
+  }
 
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl
+          refreshing={refresh}
+          onRefresh={pullMe}
+        />
+      }
+    >
       <YStack p='$4' space>
         <XStack space>
           <View>
@@ -95,7 +126,19 @@ export default function FinancePage() {
             }}
           >My Shops</Paragraph>
           <YStack space>
-            <View bg='$background' br={15} p={15} jc={'space-between'}>
+            {business && (
+              <View bg='$background' br={15} p={15} jc={'space-between'}>
+                <Text fontSize={18}>
+                  {business.name},
+                  <Text fontSize={16} color='gray'>
+                    {business.city}
+                  </Text>
+                </Text>
+                <Text fontSize={18} color='gray'>
+                  {business.phone}</Text>
+              </View>
+            )}
+            {/* <View bg='$background' br={15} p={15} jc={'space-between'}>
               <Text fontSize={18}>Kumasi Mall</Text>
               <Text fontSize={18}>+233 **** ***** 88</Text>
             </View>
@@ -106,14 +149,20 @@ export default function FinancePage() {
             <View bg='$background' br={15} p={15} jc={'space-between'}>
               <Text fontSize={18}>Kumasi Mall</Text>
               <Text fontSize={18}>+233 **** ***** 88</Text>
-            </View>
-            <View bg='$background' br={15} p={15} jc={'space-between'}>
-              <Text fontSize={18}>Kumasi Mall</Text>
-              <Text fontSize={18}>+233 **** ***** 88</Text>
-            </View>
+            </View> */}
           </YStack>
         </YStack>
       </YStack>
+
+      <View p='$4'>
+        <Button variant='outlined' color='red' onPress={logout}>
+          {/* <DoorOpen size={20} /> */}
+          <Text color='red' fontWeight='bold'>
+            Logout
+          </Text>
+        </Button>
+      </View>
+
     </ScrollView>
   )
 }
