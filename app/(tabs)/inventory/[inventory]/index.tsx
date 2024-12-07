@@ -1,10 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { ScrollView, FlatList, RefreshControl } from 'react-native';
-import SearchBar from 'components/cards/searchBar';
+import { ScrollView, RefreshControl } from 'react-native';
 import database, { inventoryCollection, productsCollection, salesItemCollection } from 'model';
 import Products from 'model/db/products';
-import InventoryCard from 'components/cards/InventoryCard';
-import { withObservables } from '@nozbe/watermelondb/react';
 import Inventory from 'model/db/inventory';
 import { useLocalSearchParams } from 'expo-router';
 import { Image, Text, View, XStack, YStack } from 'tamagui';
